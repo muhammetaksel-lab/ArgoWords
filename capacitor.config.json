@@ -1,0 +1,6 @@
+{
+  "appId": "com.argowords.app",
+  "appName": "Argo Words",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

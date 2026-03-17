@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Argo Words</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Helvetica Neue",Arial,sans-serif;background:#0d1b2a}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center}
+.screen.active{display:flex}
+
+/* ── SPLASH ── */
+#splash{justify-content:center;align-items:center;overflow:hidden;background:#0a0f1e}
+#spl-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, #1a3a6b 0%, #0a1228 60%, #050810 100%)}
+#spl-stars{position:absolute;inset:0;pointer-events:none}
+.ss{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--dl,0s)}
+@keyframes twinkle{0%,100%{opacity:.08}50%{opacity:.9}}
+.spl-logo-wrap{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;gap:6px}
+.spl-logo-main{font-size:4rem;font-weight:900;letter-spacing:6px;color:#fff;text-shadow:0 0 40px rgba(120,160,255,.8),0 4px 20px rgba(0,0,0,.6);animation:dropIn 1s cubic-bezier(.22,.68,0,1.15) both}
+.spl-logo-sub{font-size:1rem;font-weight:800;letter-spacing:12px;color:#f5c518;text-shadow:0 0 20px rgba(245,197,24,.6);animation:fadeUp .9s .4s both;margin-bottom:32px}
+@keyframes dropIn{from{transform:translateY(-50px) scale(.7);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.spl-bar-wrap{width:60%;max-width:200px;animation:fadeUp .9s .7s both}
+.spl-bar-lbl{color:rgba(255,255,255,.25);text-align:center;font-size:.55rem;font-weight:700;letter-spacing:6px;margin-bottom:8px}
+.spl-bar-bg{width:100%;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.spl-bar-fill{height:100%;width:0%;border-radius:2px;background:linear-gradient(90deg,#3a7bd5,#f5c518,#fff);transition:width .04s linear}
+
+/* ── HOME ── */
+#home{justify-content:space-between;padding:0 0 44px}
+#hbg,#gbg{position:absolute;inset:0;background-size:cover;background-position:center}
+#hov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.65)0%,rgba(0,0,0,.1)45%,rgba(0,0,0,.8)100%)}
+#gov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.5)0%,rgba(0,0,0,.0)35%,rgba(0,0,0,.2)65%,rgba(0,0,0,.9)100%)}
+
+/* WoW tarzı üst bar */
+.topbar{width:100%;padding:16px 16px 0;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:5}
+.res-pill{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.2);border-radius:30px;padding:6px 14px 6px 9px;backdrop-filter:blur(8px)}
+.res-pill .ico{font-size:1.1rem}
+.res-pill .val{color:#fff;font-weight:800;font-size:.92rem;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.pills{display:flex;gap:8px}
+.settings-btn{width:42px;height:42px;background:rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;touch-action:manipulation;backdrop-filter:blur(8px)}
+
+/* Home orta */
+.hmid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:5;gap:18px}
+.home-logo{display:flex;flex-direction:column;align-items:center}
+.home-logo-main{font-size:3rem;font-weight:900;color:#fff;letter-spacing:4px;text-shadow:0 0 30px rgba(120,160,255,.7),0 4px 16px rgba(0,0,0,.6)}
+.home-logo-sub{font-size:.8rem;font-weight:800;letter-spacing:10px;color:#f5c518;text-shadow:0 0 14px rgba(245,197,24,.5);margin-top:-4px}
+
+/* Level globe — WoW tarzı */
+.globe-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;touch-action:manipulation}
+.globe{width:110px;height:110px;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.3),rgba(120,160,255,.15) 40%,rgba(0,0,0,.3));border:2px solid rgba(255,255,255,.35);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(80,140,255,.4),inset 0 0 20px rgba(255,255,255,.08)}
+.globe-n{font-size:2.2rem;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.globe-l{font-size:.52rem;font-weight:800;color:rgba(255,255,255,.55);letter-spacing:4px}
+.globe-hint{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:1px}
+
+/* OYNA butonu — WoW yeşil */
+.play-btn{width:72%;max-width:280px;padding:16px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:50px;color:#fff;font-size:1.15rem;font-weight:900;letter-spacing:4px;cursor:pointer;position:relative;z-index:5;box-shadow:0 4px 20px rgba(34,197,94,.5),0 1px 0 rgba(255,255,255,.3) inset;touch-action:manipulation}
+.play-btn:active{transform:scale(.96)}
+
+/* ── LEVEL SEÇİM ── */
+.lvl-cont{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.lvl-cont.on{display:flex}
+.lvl-title{color:#fff;font-size:1.1rem;font-weight:900;letter-spacing:3px;margin-bottom:18px;text-shadow:0 0 20px rgba(120,180,255,.5)}
+.lvl-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;max-width:380px;width:100%;max-height:65vh;overflow-y:auto;padding:4px 2px}
+.lvl-btn{aspect-ratio:1;border-radius:12px;border:none;font-size:.8rem;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:manipulation;transition:transform .1s}
+.lvl-btn:active{transform:scale(.9)}
+.lvl-btn.done{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 2px 8px rgba(34,197,94,.4)}
+.lvl-btn.current{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.8),0 2px 8px rgba(245,158,11,.4)}
+.lvl-btn.locked{background:rgba(255,255,255,.06);color:rgba(255,255,255,.2);pointer-events:none}
+.lvl-btn.open{background:rgba(255,255,255,.85);color:#0d1b2a}
+.lvl-star{font-size:.48rem}
+.lvl-close{margin-top:18px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);color:#fff;padding:10px 32px;border-radius:30px;font-weight:700;cursor:pointer;touch-action:manipulation;font-size:.88rem}
+
+/* ── GAME ── */
+#game{justify-content:flex-start}
+.gtop{width:100%;padding:14px 14px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:5;gap:8px;flex-shrink:0}
+.gtop .pills{flex:1}
+.ltag{background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.2);border-radius:30px;padding:6px 14px;color:#fff;font-weight:900;font-size:.82rem;letter-spacing:1px;white-space:nowrap;backdrop-filter:blur(8px)}
+
+/* ── OYUN ALANI ── */
+.game-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:5;width:100%;min-height:0;padding:4px 0}
+.cw-area{width:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0 12px;flex:1;min-height:0}
+#cw-grid{position:relative}
+
+/* Hücre stili — WoW tarzı */
+.cc{position:absolute;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;transition:transform .2s,background .2s,color .2s}
+.cc.b{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.22);color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.cc.f{background:linear-gradient(135deg,#4a90e2,#2563eb);border:2px solid rgba(120,180,255,.6);color:#fff;box-shadow:0 4px 16px rgba(37,99,235,.5),0 1px 0 rgba(255,255,255,.4) inset;animation:popIn .35s cubic-bezier(.68,-.55,.27,1.55)}
+.cc.hf{background:linear-gradient(135deg,#f59e0b,#d97706);border:2px solid rgba(245,197,24,.5);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.5);animation:popIn .35s cubic-bezier(.68,-.55,.27,1.55)}
+@keyframes popIn{0%{transform:scale(.05);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.bot{width:100%;display:flex;align-items:center;justify-content:center;padding:2px 0;position:relative;z-index:5;flex-shrink:0;min-height:42px}
+#cur{height:38px;display:flex;align-items:center;justify-content:center;gap:5px}
+.cl{width:32px;height:32px;background:rgba(255,255,255,.9);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#1e3a5f;font-size:1rem;font-weight:900;box-shadow:0 2px 8px rgba(0,0,0,.25);animation:lp .1s ease}
+@keyframes lp{from{transform:scale(.3) translateY(8px);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ── ÇARK — WoW tarzı ── */
+#wheel-area{width:100%;position:relative;flex-shrink:0;z-index:5;
+  background:rgba(0,0,0,.35);
+  border-radius:50px 50px 0 0;
+  border-top:1px solid rgba(255,255,255,.15);
+  touch-action:none;overflow:hidden;
+  backdrop-filter:blur(16px)}
+#line-canvas{position:absolute;top:0;left:0;pointer-events:none;z-index:2}
+#wheel-inner{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+/* Harf daireleri — WoW tarzı parlak */
+.char{
+  border-radius:50%;
+  display:flex;justify-content:center;align-items:center;
+  font-weight:900;position:absolute;pointer-events:none;
+  background:linear-gradient(135deg,#fff 0%,#e8f0ff 100%);
+  color:#1e3a5f;
+  border:2.5px solid rgba(255,255,255,.8);
+  box-shadow:0 4px 16px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.8) inset;
+  transition:transform .08s,background .08s
+}
+.char.sel{
+  background:linear-gradient(135deg,#3b82f6,#1d4ed8)!important;
+  color:#fff!important;
+  border-color:rgba(120,180,255,.8)!important;
+  box-shadow:0 4px 20px rgba(59,130,246,.7),0 1px 0 rgba(255,255,255,.4) inset!important;
+  transform:scale(1.2)!important
+}
+
+/* Karıştır / İpucu butonları */
+.wbtn{position:absolute;border:none;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:20;touch-action:manipulation;line-height:1}
+#bsh{
+  top:50%;left:12px;transform:translateY(-50%);
+  width:50px;height:50px;
+  background:rgba(255,255,255,.9);
+  font-size:1.2rem;
+  box-shadow:0 4px 14px rgba(0,0,0,.3)
+}
+#bhi{
+  top:50%;right:12px;transform:translateY(-50%);
+  width:50px;height:50px;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  font-size:1.1rem;
+  box-shadow:0 4px 14px rgba(245,158,11,.45)
+}
+#bhi .hg{font-size:.38rem;font-weight:900;color:#fff;margin-top:1px}
+
+/* ── GÜNLÜK ÇARK ── */
+#ov-spin{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:1200;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(4px)}
+#ov-spin.on{display:flex}
+.spin-title{color:#fff;font-size:1.3rem;font-weight:900;letter-spacing:2px;margin-bottom:18px;text-shadow:0 0 20px rgba(245,197,24,.5)}
+.spin-wrap{position:relative;width:280px;height:280px;margin-bottom:28px}
+#spin-canvas{border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.spin-pointer{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:32px solid #f5c518;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));z-index:10}
+.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:radial-gradient(circle at 35% 35%,#fff8c0,#f5c518);border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);z-index:10}
+.spin-btn{background:linear-gradient(135deg,#f5c518,#e8a020);border:none;border-radius:50px;padding:14px 48px;color:#0d1b2a;font-size:1.05rem;font-weight:900;letter-spacing:2px;cursor:pointer;box-shadow:0 4px 20px rgba(245,197,24,.45);touch-action:manipulation}
+.spin-btn:disabled{opacity:.5;cursor:default}
+.spin-skip{margin-top:12px;background:none;border:none;color:rgba(255,255,255,.4);font-size:.82rem;cursor:pointer;padding:6px 16px}
+.spin-result{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.82);color:#fff;padding:12px 22px;border-radius:20px;font-size:1rem;font-weight:900;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:20}
+.spin-result.show{opacity:1}
+
+/* ── GÜNLÜK ÇARK ── */
+#ov-spin{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1200;align-items:center;justify-content:center;flex-direction:column;backdrop-filter:blur(6px)}
+#ov-spin.on{display:flex}
+.spin-title{color:#fff;font-size:1.3rem;font-weight:900;letter-spacing:2px;margin-bottom:18px;text-shadow:0 0 20px rgba(245,197,24,.6)}
+.spin-wrap{position:relative;width:280px;height:280px;margin-bottom:24px}
+#spin-canvas{border-radius:50%;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.1)}
+.spin-pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:34px solid #f5c518;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));z-index:10}
+.spin-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;background:radial-gradient(circle at 35% 35%,#fff8c0,#f5c518);border-radius:50%;border:4px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.4);z-index:10}
+.spin-btn{background:linear-gradient(135deg,#f5c518,#e8a020);border:none;border-radius:50px;padding:15px 52px;color:#0d1b2a;font-size:1.1rem;font-weight:900;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 24px rgba(245,197,24,.5);touch-action:manipulation}
+.spin-btn:active{transform:scale(.96)}
+.spin-btn:disabled{opacity:.5;cursor:default;transform:none}
+.spin-skip{margin-top:12px;background:none;border:none;color:rgba(255,255,255,.35);font-size:.82rem;cursor:pointer;padding:8px 20px;touch-action:manipulation}
+.spin-result{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,15,35,.92);color:#fff;padding:14px 24px;border-radius:20px;font-size:1.05rem;font-weight:900;text-align:center;opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap;z-index:20;border:1px solid rgba(245,197,24,.4)}
+.spin-result.show{opacity:1}
+
+#toast{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-12px);background:rgba(10,15,35,.92);color:#fff;padding:9px 22px;border-radius:30px;font-weight:700;font-size:.83rem;opacity:0;transition:all .2s;z-index:9000;pointer-events:none;white-space:nowrap;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── OVERLAY ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1200;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.card{background:linear-gradient(145deg,#1e2d4a,#151e35);border:1px solid rgba(120,180,255,.25);border-radius:24px;padding:28px 30px;text-align:center;max-width:310px;width:88%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:popIn .3s ease}
+.card .emo{font-size:2.8rem;margin-bottom:6px}
+.card h2{font-size:1.4rem;color:#fff;margin:6px 0 4px;font-weight:900}
+.card .sub{color:rgba(255,255,255,.6);font-size:.82rem;margin-bottom:18px;line-height:1.5}
+.cta{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:30px;padding:12px 32px;color:#fff;font-size:.93rem;font-weight:900;cursor:pointer;letter-spacing:1px;touch-action:manipulation;box-shadow:0 4px 16px rgba(34,197,94,.4)}
+.rbar-bg{height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.rbar-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#22c55e);border-radius:3px;width:0%;transition:width .09s}
+.daily-gems{font-size:2.2rem;font-weight:900;color:#f5c518;margin:8px 0 16px;text-shadow:0 0 20px rgba(245,197,24,.5)}
+
+/* ── DEF SHEET ── */
+#def-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .35s;z-index:1400;pointer-events:none;backdrop-filter:blur(4px)}
+#def-backdrop.on{opacity:1;pointer-events:all}
+#def-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1401;transform:translateY(110%);transition:transform .38s cubic-bezier(.22,.68,0,1.1);pointer-events:none;max-width:520px;margin:0 auto}
+#def-sheet.on{transform:translateY(0);pointer-events:all}
+.def-inner{background:linear-gradient(160deg,#1e2d4a,#0f1a2e);border-radius:28px 28px 0 0;padding:0 0 44px;overflow:hidden;border-top:1px solid rgba(120,180,255,.25)}
+.def-handle{width:44px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:14px auto 0}
+.def-banner{margin:16px 20px 0;border-radius:16px;padding:18px 20px;background:linear-gradient(135deg,#1e3a6b,#2563eb 60%,#1d4ed8);display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(37,99,235,.4)}
+.def-trophy{font-size:2.2rem}
+.def-found-lbl{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.55);letter-spacing:4px;text-transform:uppercase}
+.def-word-big{font-size:1.8rem;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.def-gems-txt{font-size:.74rem;font-weight:700;color:#f5c518;margin-top:3px}
+.def-meaning-wrap{padding:14px 20px 0}
+.def-meaning-lbl{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px}
+.def-meaning-txt{font-size:.95rem;font-weight:700;color:#e8f0ff;line-height:1.55}
+.def-example{margin-top:8px;font-size:.82rem;color:rgba(255,255,255,.5);font-style:italic;line-height:1.4}
+.def-close-btn{display:block;width:calc(100% - 40px);margin:18px 20px 0;padding:13px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:40px;color:#fff;font-size:.93rem;font-weight:900;cursor:pointer;letter-spacing:1px;touch-action:manipulation;box-shadow:0 4px 16px rgba(37,99,235,.4)}
+
+/* ── SETTINGS ── */
+#settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+#settings-modal.on{display:flex}
+.settings-sheet{background:linear-gradient(160deg,#1e2d4a,#111c30);border-radius:28px 28px 0 0;width:100%;max-width:480px;padding:0 0 50px;border-top:1px solid rgba(120,180,255,.2);animation:slideUp .32s cubic-bezier(.22,.68,0,1.1)}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+.settings-handle{width:44px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:14px auto 0}
+.settings-title{text-align:center;font-size:1rem;font-weight:900;color:#fff;padding:14px 0 8px;letter-spacing:2px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-top:1px solid rgba(255,255,255,.07)}
+.settings-row-lbl{font-size:.92rem;font-weight:700;color:rgba(255,255,255,.85)}
+.stg-toggle{width:48px;height:26px;background:rgba(255,255,255,.15);border-radius:13px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.stg-toggle.on{background:#22c55e}
+.stg-toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.stg-toggle.on::after{transform:translateX(22px)}
+.reset-btn{display:block;width:calc(100% - 48px);margin:20px 24px 0;padding:14px;background:linear-gradient(135deg,#dc2626,#991b1b);border:none;border-radius:16px;color:#fff;font-size:.92rem;font-weight:900;cursor:pointer;touch-action:manipulation}
+.settings-close{display:block;width:calc(100% - 48px);margin:8px 24px 0;padding:12px;background:rgba(255,255,255,.08);border:none;border-radius:16px;color:rgba(255,255,255,.7);font-size:.88rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+#confirm-reset{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1500;display:none;align-items:center;justify-content:center}
+#confirm-reset.on{display:flex}
+.confirm-card{background:linear-gradient(145deg,#1e2d4a,#111c30);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 26px 22px;text-align:center;width:80%;max-width:290px}
+.confirm-card .cico{font-size:2.5rem;margin-bottom:8px}
+.confirm-card h3{font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:5px}
+.confirm-card p{font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:20px;line-height:1.5}
+.confirm-btns{display:flex;gap:10px}
+.confirm-btns button{flex:1;padding:12px 0;border:none;border-radius:12px;font-weight:900;font-size:.88rem;cursor:pointer}
+.btn-cancel{background:rgba(255,255,255,.1);color:#fff}
+.btn-reset{background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff}
+.auth-section{padding:14px 24px 0;border-top:1px solid rgba(255,255,255,.07)}
+.auth-title{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:4px;text-transform:uppercase;margin-bottom:12px}
+.auth-user-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:12px;margin-bottom:10px}
+.auth-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.auth-user-info{flex:1;min-width:0}
+.auth-user-name{font-size:.88rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.auth-user-email{font-size:.7rem;color:rgba(255,255,255,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.auth-logout-btn{background:rgba(220,38,38,.2);border:1px solid rgba(220,38,38,.4);border-radius:9px;padding:5px 12px;font-size:.73rem;font-weight:700;color:#fca5a5;cursor:pointer;flex-shrink:0}
+.auth-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.06);font-size:.86rem;font-weight:700;color:rgba(255,255,255,.8);cursor:pointer;margin-bottom:8px;touch-action:manipulation}
+
+/* ── KVKK ── */
+#kvkk-ov{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:2000;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+#kvkk-ov.show{display:flex}
+.kvkk-sheet{background:linear-gradient(160deg,#1e2d4a,#111c30);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 22px 46px;max-height:88vh;overflow-y:auto;border-top:1px solid rgba(120,180,255,.2)}
+.kvkk-logo{font-size:2rem;text-align:center;margin-bottom:8px}
+.kvkk-title{font-size:1rem;font-weight:900;color:#fff;text-align:center;margin-bottom:12px}
+.kvkk-text{font-size:.76rem;color:rgba(255,255,255,.5);line-height:1.65;margin-bottom:16px}
+.kvkk-checks{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.kvkk-check{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(255,255,255,.05);border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,.08)}
+.kvkk-check input{width:17px;height:17px;margin-top:1px;accent-color:#22c55e;flex-shrink:0;cursor:pointer}
+.kvkk-check-lbl{font-size:.78rem;color:rgba(255,255,255,.7);line-height:1.5}
+.kvkk-check-lbl b{color:#fff}
+.kvkk-accept{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:16px;color:#fff;font-size:.92rem;font-weight:900;cursor:pointer;margin-bottom:8px;touch-action:manipulation}
+.kvkk-reject{display:block;width:100%;padding:12px;background:rgba(255,255,255,.07);border:none;border-radius:16px;color:rgba(255,255,255,.55);font-size:.83rem;font-weight:700;cursor:pointer;touch-action:manipulation}
+</style>
+</head>
+<body>
+
+<!-- KVKK -->
+<div id="kvkk-ov">
+  <div class="kvkk-sheet">
+    <div class="kvkk-logo">🍪</div>
+    <div class="kvkk-title">Gizlilik ve Çerez Politikası</div>
+    <div class="kvkk-text">Argo Words olarak kişisel verilerinizi ve çerezleri 6698 sayılı KVKK kapsamında kullanmaktayız.</div>
+    <div class="kvkk-checks">
+      <label class="kvkk-check"><input type="checkbox" id="kc-z" checked disabled><div class="kvkk-check-lbl"><b>Zorunlu Çerezler</b> — devre dışı bırakılamaz.</div></label>
+      <label class="kvkk-check"><input type="checkbox" id="kc-a"><div class="kvkk-check-lbl"><b>Analitik</b> — anonim istatistik.</div></label>
+      <label class="kvkk-check"><input type="checkbox" id="kc-r"><div class="kvkk-check-lbl"><b>Reklam</b> — AdMob kişiselleştirme.</div></label>
+    </div>
+    <button class="kvkk-accept" id="kvkk-accept-btn">Kabul Et ve Devam Et</button>
+    <button class="kvkk-reject" id="kvkk-reject-btn">Yalnızca Zorunlu</button>
+  </div>
+</div>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <div id="spl-bg"></div>
+  <div id="spl-stars"></div>
+  <div class="spl-logo-wrap">
+    <div class="spl-logo-main">ARGO</div>
+    <div class="spl-logo-sub">WORDS</div>
+    <div class="spl-bar-wrap">
+      <div class="spl-bar-lbl">YÜKLENİYOR</div>
+      <div class="spl-bar-bg"><div class="spl-bar-fill" id="spl-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div id="hbg"></div><div id="hov"></div>
+  <div class="topbar">
+    <div class="pills">
+      <div class="res-pill"><span class="ico">💎</span><span class="val" id="gems-h">0</span></div>
+      <div class="res-pill"><span class="ico">💡</span><span class="val" id="hints-h">20</span></div>
+    </div>
+    <div class="settings-btn" id="bsettings">⚙️</div>
+  </div>
+  <div class="hmid">
+    <div class="home-logo">
+      <div class="home-logo-main">ARGO</div>
+      <div class="home-logo-sub">WORDS</div>
+    </div>
+    <div class="globe-wrap" id="bglobe">
+      <div class="globe">
+        <div class="globe-n" id="glv">1</div>
+        <div class="globe-l">SEVİYE</div>
+      </div>
+      <div class="globe-hint">Değiştirmek için dokun</div>
+    </div>
+  </div>
+  <button class="play-btn" id="bstart">OYNA</button>
+</div>
+
+<!-- LEVEL SEÇİM -->
+<div class="lvl-cont" id="lvl-cont">
+  <div class="lvl-title">🗺 SEVİYE SEÇ</div>
+  <div class="lvl-grid" id="lvl-grid"></div>
+  <button class="lvl-close" id="lvl-close">Kapat</button>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="game">
+  <div id="gbg"></div><div id="gov"></div>
+  <div class="gtop">
+    <div class="pills">
+      <div class="res-pill"><span class="ico">💎</span><span class="val" id="gems-g">0</span></div>
+    </div>
+    <div class="ltag" id="ltag">SEVİYE 1</div>
+    <div class="settings-btn" id="bback" style="font-size:.9rem">←</div>
+  </div>
+  <div class="game-mid">
+    <div class="cw-area"><div id="cw-grid"></div></div>
+    <div class="bot"><div id="cur"></div></div>
+  </div>
+  <div id="wheel-area">
+    <canvas id="line-canvas"></canvas>
+    <div id="wheel-inner"></div>
+    <div class="wbtn" id="bsh">🔀</div>
+    <div class="wbtn" id="bhi">💡<div class="hg" id="hint-count-btn">20</div></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Overlayler -->
+<div class="ov" id="ov-done">
+  <div class="card">
+    <div class="emo">🎉</div><h2>Tebrikler!</h2>
+    <div class="sub" id="done-txt">Seviye tamamlandı!</div>
+    <button class="cta" id="bnext">Sonraki Seviye →</button>
+  </div>
+</div>
+<!-- Günlük Çark -->
+<div id="ov-spin">
+  <div class="spin-title">🎁 GÜNLÜK ÖDÜL ÇARKI</div>
+  <div class="spin-wrap">
+    <div class="spin-pointer"></div>
+    <canvas id="spin-canvas" width="280" height="280"></canvas>
+    <div class="spin-center"></div>
+    <div class="spin-result" id="spin-result"></div>
+  </div>
+  <button class="spin-btn" id="spin-btn">ÇEVİR!</button>
+  <button class="spin-skip" id="spin-skip">Atla</button>
+</div>
+<div class="ov" id="ov-rw">
+  <div class="card">
+    <div class="emo">🎬</div><h2>İpucu Kazan!</h2>
+    <div class="sub">Reklam izle → <strong>+5 ipucu</strong></div>
+    <div class="rbar-bg"><div class="rbar-fill" id="rwbar"></div></div>
+    <button class="cta" id="brw" disabled>Bekle...</button>
+    <div style="margin-top:10px"><button id="brw-cancel" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:.82rem;cursor:pointer;padding:4px 12px">Vazgeç</button></div>
+  </div>
+</div>
+<div class="ov" id="ov-buy-hint">
+  <div class="card">
+    <div class="emo">💡</div><h2>İpucu Bitti!</h2>
+    <div class="sub">Elmas harca veya reklam izle</div>
+    <div style="margin-bottom:10px"><button class="cta" id="bbuy-hint">💎 5 Harca → 5 İpucu</button></div>
+    <button id="bbuy-ad" style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:24px;padding:10px 22px;color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;width:100%;touch-action:manipulation">🎬 Reklam İzle (+5 💡)</button>
+    <div style="margin-top:10px"><button id="bbuy-cancel" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:.82rem;cursor:pointer;padding:4px 12px">Vazgeç</button></div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div id="settings-modal">
+  <div class="settings-sheet">
+    <div class="settings-handle"></div>
+    <div class="settings-title">⚙️ AYARLAR</div>
+    <div class="settings-row"><div class="settings-row-lbl">🔊 Ses Efektleri</div><div class="stg-toggle on" id="stg-sound"></div></div>
+    <div class="settings-row"><div class="settings-row-lbl">📳 Titreşim</div><div class="stg-toggle on" id="stg-vib"></div></div>
+    
+    <div class="auth-section" style="display:none">
+      <div class="auth-title">HESAP</div>
+      <div id="auth-logged-out">
+        <div style="color:rgba(255,255,255,.35);font-size:.78rem;text-align:center;padding:8px 0;">Yakında aktif olacak</div>
+      </div>
+      <div id="auth-logged-in" style="display:none">
+        <div class="auth-user-row">
+          <div class="auth-avatar">👤</div>
+          <div class="auth-user-info">
+            <div class="auth-user-name" id="auth-name">—</div>
+            <div class="auth-user-email" id="auth-email">—</div>
+          </div>
+          <button class="auth-logout-btn" id="btn-logout">Çıkış</button>
+        </div>
+      </div>
+    </div>
+    <button class="reset-btn" id="btn-reset">🗑 İlerlemeyi Sıfırla</button>
+    <button class="settings-close" id="settings-close">Kapat</button>
+  </div>
+</div>
+<div id="confirm-reset">
+  <div class="confirm-card">
+    <div class="cico">⚠️</div><h3>Emin misin?</h3><p>Tüm ilerleme silinecek. Bu işlem geri alınamaz.</p>
+    <div class="confirm-btns">
+      <button class="btn-cancel" id="reset-cancel">Vazgeç</button>
+      <button class="btn-reset" id="reset-confirm">Sıfırla</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEF SHEET -->
+<div id="def-backdrop"></div>
+<div id="def-sheet">
+  <div class="def-inner">
+    <div class="def-handle"></div>
+    <div class="def-banner">
+      <div class="def-trophy">🏆</div>
+      <div>
+        <div class="def-found-lbl">KELİME BULUNDU</div>
+        <div class="def-word-big" id="def-word">KANKA</div>
+        <div class="def-gems-txt" id="def-gems-txt">+50 💎 kazandın!</div>
+      </div>
+    </div>
+    <div class="def-meaning-wrap">
+      <div class="def-meaning-lbl">📖 ANLAMI</div>
+      <div class="def-meaning-txt" id="def-meaning"></div>
+      <div class="def-example" id="def-example"></div>
+    </div>
+    <button class="def-close-btn" id="def-close">Harika, devam et! 👊</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// VERİTABANI + LEVELLAR + GÖRSELLER
+// ═══════════════════════════════════════════
+var DB={"GIR": ["Alay, eğlence, lakırdı.", "\"Gır geçiyorlar.\""], "SAP": ["Başıboş, sevgilisi olmayan.", "\"Sap kaldı.\""], "ZİL": ["Çok aç veya beş parasız.", "\"Zil gibi.\""], "ZOM": ["Çok sarhoş.", "\"Zom olmuş.\""], "AVAL": ["Saf, sersem kimse.", "\"Aval gibi baktı.\""], "ÇAÇA": ["Geveze veya fazla konuşan.", "\"Çaça gibi konuşuyor.\""], "FOYA": ["Bir işin gizli kalan kötü tarafı.", "\"Foyası çıktı.\""], "FURİ": ["Alkış.", "\"Furi aldı.\""], "GAGA": ["Ağız.", "\"Gagasını kapat.\""], "İNEK": ["Çok çalışkan öğrenci.", "\"İnek biri.\""], "ISKA": ["Hedefi vuramama, boşa çıkma.", "\"Iska geçti.\""], "KOVA": ["Çok gol yiyen kaleci veya takım.", "\"Kova gibi.\""], "KRAL": ["Mükemmel, üstün nitelikli.", "\"Kral biri.\""], "RONT": ["Dikizleme, gözetleme.", "\"Ront atıyor.\""], "ZULA": ["Gizli yer, saklanan şey.", "\"Zulaya koydu.\""], "AFTOS": ["Sevgili, dost.", "\"Aftosum var.\""], "AKMAK": ["Çabucak kaçmak, ortamdan ayrılmak.", "\"Aktı gitti.\""], "ANTEN": ["Dedikoducu, söz getirip götüren.", "\"Anten biri.\""], "APİKO": ["Çok şık veya her an hazır, tetikte.", "\"Apiko durmuş.\""], "BELEŞ": ["Bedava, karşılıksız.", "\"Beleş aldı.\""], "ÇAKAL": ["Kurnaz, uyanık, çıkarcı.", "\"Çakal biri.\""], "ÇAMUR": ["Belalı, yapışkan, huysuz kişi.", "\"Çamur gibi yapıştı.\""], "ÇARIK": ["Cüzdan.", "\"Çarığı doldu.\""], "DENYO": ["Akılsız, dengesiz, bön.", "\"Denyo biri.\""], "EKMEK": ["Birini randevuya gitmeyerek atlatmak.", "\"Ekmek yedi.\""], "ENAYİ": ["Kolayca aldatılabilen, bön.", "\"Enayi biri.\""], "ENTEL": ["Entelektüel görünen, her konuda bilgili tavırlı.", "\"Entel takılıyor.\""], "GICIK": ["Sinir bozan kişi veya durum.", "\"Gıcık biri.\""], "HAFIZ": ["Her şeyi anlamadan ezberleyen.", "\"Hafız gibi ezberledi.\""], "HANUT": ["Komisyon, dükkancı payı.", "\"Hanut istedi.\""], "HANZO": ["Kaba, görgüsüz.", "\"Hanzo biri.\""], "HAŞAT": ["Bozuk, işe yaramaz hale gelmiş.", "\"Haşat oldu.\""], "KANKA": ["Çok yakın arkadaş.", "\"Kankam.\""], "KAZIK": ["Değerinden çok pahalı veya aldatılma.", "\"Kazığa geldi.\""], "KERİZ": ["Kolayca kandırılabilen saf kimse.", "\"Keriz biri.\""], "KIRO": ["Kaba saba, eğitimsiz.", "\"Kıro gibi davrandı.\""], "KITIR": ["Yalan söz, uydurma.", "\"Kıtır söylüyor.\""], "KOKOŞ": ["Abartılı süslü kadın.", "\"Kokoş gibi giyinmiş.\""], "KOKOZ": ["Parasız, züğürt.", "\"Kokoz kaldı.\""], "KÖTEK": ["Dayak.", "\"Kötek yedi.\""], "LAVUK": ["Sevimsiz, gereksiz tip.", "\"Lavuk biri.\""], "MADİK": ["Aldatma, hile, oyun.", "\"Madik attı.\""], "MARİZ": ["Dayak, dövme.", "\"Mariz yedi.\""], "MORUK": ["Yaşlı kimse veya arkadaş hitabı.", "\"Moruk ne dedi?\""], "PAÇOZ": ["Değersiz veya hafifmeşrep kişi.", "\"Paçoz biri.\""], "PAPEL": ["Para.", "\"Papel yok.\""], "PİYAZ": ["Çıkar için söylenen övücü söz, yağcılık.", "\"Piyaz yapıyor.\""], "RACON": ["Yol, yöntem, kabadayı usulü.", "\"Racon kesti.\""], "SAKSI": ["Baş, kafa.", "\"Saksısını kullan.\""], "SAZAN": ["Her söze hemen atlayan, saf.", "\"Sazan gibi tutuldu.\""], "SİPSİ": ["Sigara.", "\"Sipsi içti.\""], "SİVİL": ["Çıplak, giysisiz.", "\"Sivil durmuş.\""], "TONGA": ["Tuzak, hile, oyun.", "\"Tongaya düştü.\""], "TUZLU": ["Fiyatı çok yüksek, pahalı.", "\"Tuzlu geldi.\""], "VOLTA": ["Bir aşağı bir yukarı yürümek.", "\"Volta atıyor.\""], "ZIPIR": ["Delidolu, delişmen.", "\"Zıpır biri.\""], "ABAZAN": ["Aç, parasız veya cinsel açlık çeken.", "\"Abazan kalmış.\""], "ANAFOR": ["Emek vermeden gelen kazanç.", "\"Anafordan geçiniyor.\""], "ARAKCI": ["Hırsız, eşya aşıran.", "\"Arakçı biri.\""], "BICKIN": ["Kabadayı tavırlı, cesur.", "\"Bıçkın biri.\""], "DANDİK": ["Kalitesiz, kötü nitelikli.", "\"Dandik iş.\""], "DUBARA": ["Hile, tuzak, oyun.", "\"Dubara çevirdi.\""], "FERTİK": ["Kaçış, ayrılış.", "\"Fertik attı.\""], "FİYAKA": ["Gösteriş, caka.", "\"Fiyaka satıyor.\""], "KAKNEM": ["Çirkin, huysuz kadın.", "\"Kaknem biri.\""], "MADARA": ["Rezil, kötü duruma düşmüş.", "\"Madara oldu.\""], "MASTOR": ["Çok sarhoş.", "\"Mastor olmuş.\""], "MATRAK": ["Eğlenceli, komik.", "\"Matrak biri.\""], "MAYTAP": ["Alay, eğlenme.", "\"Maytap geçiyorlar.\""], "PIRPIR": ["Bitirim, hareketli.", "\"Pırpır biri.\""], "PİLAKİ": ["Aptal, budala kimse.", "\"Pilaki gibi.\""], "SAGMAK": ["Birini kandırıp parasını almak.", "\"Sağdı gitti.\""], "TERTİP": ["Aynı dönem asker.", "\"Tertibimden biri.\""], "TÜYMEK": ["Kaçmak, ortadan kaybolmak.", "\"Tüydü gitti.\""], "YAHUDİ": ["Cimri (argo tabir).", "\"Yahudi gibi tuttu.\""], "YAVŞAK": ["Yılışık veya sinir bozucu kişi.", "\"Yavşak biri.\""], "ZIRZOP": ["Aklına eseni yapan, dengesiz.", "\"Zırzop biri.\""], "AYNASIZ": ["Polis.", "\"Aynasız geldi.\""], "ABANMAK": ["Birinin sırtından geçinmek.", "\"Abanmış üstüne.\""], "ANDAVAL": ["Beceriksiz, şaşkın, bön.", "\"Andaval biri.\""], "ÇAÇARON": ["Çok konuşan, gevezelik yapan.", "\"Çaçaron biri.\""], "DALLAMA": ["Aptal, budala, görgüsüz.", "\"Dallama biri.\""], "FASARYA": ["Boş ve anlamsız söz.", "\"Fasarya bunlar.\""], "KAMANÇO": ["Aktarma, yükleme.", "\"Kamanço yaptı.\""], "KAYARTO": ["Ahlaksız kimse.", "\"Kayarto biri.\""], "KITIRCI": ["Çok yalan söyleyen.", "\"Kıtırcı biri.\""], "MÜZEVİR": ["Dedikoducu, ara bozucu.", "\"Müzevir biri.\""], "İSPİYON": ["Gizlice haber verme, casusluk.", "\"İspiyon yaptı.\""], "KOKOROZ": ["Çirkin veya parasız kimse.", "\"Kokoroz biri.\""], "ALABANDA": ["Paylama, azarlama.", "\"Alabanda yedi.\""], "ATMASYON": ["Uydurma, asılsız söz.", "\"Atmasyon bunlar.\""], "KÜLÜSTÜR": ["Eski, yıpranmış, bozuk.", "\"Külüstür olmuş.\""], "SIFATSIZ": ["Tipi veya duruşu bozuk olan.", "\"Sıfatsız biri.\""], "ARAKLAMAK": ["Çalmak.", "\"Arakladı gitti.\""], "HACILAMAK": ["Çalmak, hırsızlık yapmak.", "\"Hacıladı.\""], "ZAMAZİNGO": ["Adı hatırlanamayan nesne.", "\"Zamazingo o şey.\""], "TAHTALIKöY": ["Ahiret, mezarlık.", "\"Tahtalıköy'e gönderir.\""], "VİTAMİNSİZ": ["Beceriksiz veya çok zayıf.", "\"Vitaminsiz biri.\""], "CİBİLİYETSİZ": ["Soyu bozuk, güvenilmez.", "\"Cibiliyetsiz biri.\""], "ZIL": ["Beş parasız veya çok acıkmış.", "\"Zil oldu.\""], "KEK": ["Kolay kandırılan, saf kişi.", "\"Kek oldu.\""], "FOS": ["Boş, asılsız, dayanıksız.", "\"Fos oldu.\""], "MAL": ["Akılsız, anlayışsız kimse.", "\"Mal oldu.\""], "TIS": ["Korkup susma, sesini çıkaramama.", "\"Tis oldu.\""], "BAF": ["Kandırma veya cinsel argo.", "\"Baf oldu.\""], "CIZ": ["Tehlikeli, dokunulmaması gereken.", "\"Ciz oldu.\""], "COP": ["Polis memuru (argo).", "\"Cop oldu.\""], "ÇÜŞ": ["Yavaşla anlamında kaba ünlem.", "\"Çüş oldu.\""], "DAL": ["Aniden kavgaya veya bir yere girmek.", "\"Dal oldu.\""], "FIS": ["Etkisiz, önemsiz, boş çıkan iş.", "\"Fis oldu.\""], "FIŞ": ["Gizlice yapılan iş veya fısıltı.", "\"Fiş oldu.\""], "HAP": ["İlaç veya uyuşturucu hap.", "\"Hap oldu.\""], "KOF": ["İçi boş, yeteneksiz, gösterişçi.", "\"Kof oldu.\""], "KÜT": ["Aniden, sertçe (Küt diye).", "\"Küt oldu.\""], "LÜP": ["Bedavadan konma, yutma.", "\"Lüp oldu.\""], "NAŞ": ["Git, buradan uzaklaş.", "\"Naş oldu.\""], "PAT": ["Ansızın söylenen söz veya vuruş.", "\"Pat oldu.\""], "PİK": ["En üst nokta (Tavan yaptı).", "\"Pi̇k oldu.\""], "ŞOK": ["Şaşkınlık yaratan olay.", "\"Şok oldu.\""], "ŞUT": ["Birini bir yerden kovmak.", "\"Şut oldu.\""], "TIP": ["Sus işareti, sessizlik emri.", "\"Tip oldu.\""], "TOY": ["Deneyimsiz, acemi genç.", "\"Toy oldu.\""], "YUH": ["Ayıplama ve protesto sesi.", "\"Yuh oldu.\""], "ZIT": ["Karşıt, aksi giden durum.", "\"Zit oldu.\""], "GAK": ["Gereksiz ve boş konuşma.", "\"Gak oldu.\""], "KET": ["Engel, kısıtlama (Ket vurmak).", "\"Ket oldu.\""], "DEV": ["Polis (argo tabiriyle aynasız).", "\"Dev oldu.\""], "FURI": ["Alkış, tezahürat (eski argo).", "\"Furi oldu.\""], "AFİS": ["Gösteriş, caka, fiyaka.", "\"Afi̇s oldu.\""], "ATAR": ["Sinirli tepki, kavgacı tavır.", "\"Atar oldu.\""], "AYAR": ["Birine haddini bildirmek.", "\"Ayar oldu.\""], "BAZA": ["Yatak altı (argo: sığınak).", "\"Baza oldu.\""], "CAKA": ["Gösteriş yapma, fiyaka satma.", "\"Caka oldu.\""], "CILK": ["Tadı kaçmış, bozulmuş durum.", "\"Cilk oldu.\""], "CIRT": ["Değersiz, uyduruk, dayanıksız.", "\"Cirt oldu.\""], "CİKS": ["Çok havalı, kaliteli, şık.", "\"Ci̇ks oldu.\""], "DEFO": ["Kusur, hata, bozukluk.", "\"Defo oldu.\""], "DIZZ": ["Çalmak, aşırmak (argo).", "\"Dizz oldu.\""], "FIRT": ["Bir yudum içki veya sigara.", "\"Firt oldu.\""], "FİNO": ["Birinin peşinden ayrılmayan dalkavuk.", "\"Fi̇no oldu.\""], "GACI": ["Kadın, sevgili (argo).", "\"Gaci oldu.\""], "GAZİ": ["Kavgadan yara bereyle çıkan.", "\"Gazi̇ oldu.\""], "HACI": ["Tanıdık, yakın arkadaş.", "\"Haci oldu.\""], "HIRT": ["Kaba, anlayışsız erkek.", "\"Hirt oldu.\""], "HÖŞT": ["Kaba bir durdurma ünlemi.", "\"Höşt oldu.\""], "KEÇE": ["Aptal, bön veya parasız.", "\"Keçe oldu.\""], "KENE": ["Birine yapışıp sömüren tip.", "\"Kene oldu.\""], "KULP": ["Bahane, bahane uydurma.", "\"Kulp oldu.\""], "KÜPE": ["Ders çıkarma (Kulağa küpe).", "\"Küpe oldu.\""], "LOLO": ["Bize mi anlatıyorsun (Lolo yapmak).", "\"Lolo oldu.\""], "NATA": ["Saf, hiçbir şeyden anlamayan.", "\"Nata oldu.\""], "ODUN": ["Duygusuz, kaba saba kişi.", "\"Odun oldu.\""], "PALA": ["Bıyıklı, kabadayı tavırlı.", "\"Pala oldu.\""], "PAŞA": ["Keyfine düşkün, rahat kimse.", "\"Paşa oldu.\""], "POTA": ["Hedef (argo: riskli durum).", "\"Pota oldu.\""], "ŞİKE": ["Anlaşmalı hileli oyun.", "\"Şi̇ke oldu.\""], "SOTA": ["Gizli, kuytu yer, pusu.", "\"Sota oldu.\""], "TAKA": ["Eski, dökülen araç.", "\"Taka oldu.\""], "TIRT": ["İşe yaramaz, kalitesiz.", "\"Tirt oldu.\""], "YAKA": ["Elinden kurtulamama.", "\"Yaka oldu.\""], "ZOKA": ["Yutulan hile, tuzak.", "\"Zoka oldu.\""], "ŞOV": ["Gösteriş, dikkat çekme.", "\"Şov oldu.\""], "FAÇA": ["Yüz, çehre veya hava.", "\"Faça oldu.\""], "JİLE": ["Çok şık veya keskin zekalı.", "\"Ji̇le oldu.\""], "SAKO": ["Eski ceket veya palto.", "\"Sako oldu.\""], "ORÇO": ["Garip, ne yaptığı belirsiz.", "\"Orço oldu.\""], "JİGO": ["Yakışıklı genç (argo bağlamı).", "\"Ji̇go oldu.\""], "İBRE": ["Durumun gidişatı, yönü.", "\"İbre oldu.\""], "HARBI": ["Gerçek, sahici, dürüst.", "\"Harbi oldu.\""], "HIYAR": ["Anlayışsız, kaba kişi.", "\"Hiyar oldu.\""], "İKRAM": ["Çıkar için sunulan rüşvet.", "\"İkram oldu.\""], "KAÇAK": ["Vergisiz veya gizli iş.", "\"Kaçak oldu.\""], "KAFES": ["Tuzak, kandırma (Kafese koymak).", "\"Kafes oldu.\""], "KAPAK": ["Susturan, utandıran cevap.", "\"Kapak oldu.\""], "KIYIM": ["Büyük zarar verme veya dövme.", "\"Kiyim oldu.\""], "KIYAK": ["Çok güzel veya torpil.", "\"Kiyak oldu.\""], "KOFTE": ["Yalan, uydurma, asılsız.", "\"Kofte oldu.\""], "MAPUS": ["Cezaevi, hapishane.", "\"Mapus oldu.\""], "MAVAL": ["Yalan dolan, boş söz.", "\"Maval oldu.\""], "MEKAN": ["Takılınan yer, adres.", "\"Mekan oldu.\""], "RAMPA": ["Hazırlık aşaması veya dik çıkış.", "\"Rampa oldu.\""], "REHİN": ["Alıkonulan şey veya kişi.", "\"Rehi̇n oldu.\""], "SAKA": ["Su taşıyan (argo: ayakçı).", "\"Saka oldu.\""], "SALÇA": ["İstenmeyen yere karışan.", "\"Salça oldu.\""], "SAPAK": ["Yanlış yol veya garip davranış.", "\"Sapak oldu.\""], "SARIK": ["Kafa karıştırıcı durum.", "\"Sarik oldu.\""], "TAPIŞ": ["Kaçıp gitmek (Tapışlamak).", "\"Tapiş oldu.\""], "TENHA": ["Boş, kimsenin olmadığı yer.", "\"Tenha oldu.\""], "YAĞCI": ["Menfaat için öven kimse.", "\"Yağci oldu.\""], "APAÇİ": ["Rüküş ve kaba saba genç.", "\"Apaçi̇ oldu.\""], "ÇÖMEZ": ["Bir işte yeni ve acemi.", "\"Çömez oldu.\""], "ARSIZ": ["Utanmaz, sıkılmaz kişi.", "\"Arsiz oldu.\""], "BARON": ["Büyük suç lideri veya güçlü.", "\"Baron oldu.\""], "CIVIK": ["Ciddiyetsiz, yılışık tip.", "\"Civik oldu.\""], "ÇAKAR": ["Sahte siren veya uyanıklık.", "\"Çakar oldu.\""], "DIZO": ["Sokak serserisi, kaba genç.", "\"Dizo oldu.\""], "DÜMEN": ["Hile, aldatma, tezgah.", "\"Dümen oldu.\""], "FAKA": ["Tuzak (Faka basmak).", "\"Faka oldu.\""], "GAREZ": ["Gizli düşmanlık, kin.", "\"Garez oldu.\""], "KOLPA": ["Sahte, uydurma, yalan iş.", "\"Kolpa oldu.\""], "LOBİ": ["Gizli çıkar grubu.", "\"Lobi̇ oldu.\""], "TOKAT": ["Dolandırıcılık (Tokatlamak).", "\"Tokat oldu.\""], "KOFİK": ["İçi boş, sadece dışı havalı.", "\"Kofi̇k oldu.\""], "FİRİK": ["Gizli takip, dikizleme.", "\"Fi̇ri̇k oldu.\""], "ZEVZEK": ["Boşboğaz, geveze, saçmalayan.", "\"Zevzek oldu.\""], "TORBA": ["Uyuşturucu veya rüşvet parası.", "\"Torba oldu.\""], "JANTİ": ["Çok şık ve havalı kişi.", "\"Janti̇ oldu.\""], "KIRAN": ["Zarar veren veya hakim olan.", "\"Kiran oldu.\""], "ŞEBEK": ["Sevimsiz şakalar yapan.", "\"Şebek oldu.\""], "YAMUK": ["Hatalı iş veya ihanet.", "\"Yamuk oldu.\""], "RADAR": ["Her şeyi fark eden uyanık.", "\"Radar oldu.\""], "TIKIR": ["Yolunda giden iş (Tıkırında).", "\"Tikir oldu.\""], "PELUŞ": ["Etkisiz ve yumuşak başlı.", "\"Peluş oldu.\""], "PASLI": ["Yeteneğini kaybetmiş, ham.", "\"Pasli oldu.\""], "SIVIŞ": ["Sessizce kaçıp gitme.", "\"Siviş oldu.\""], "YANCI": ["Birinin yanında bedavadan geçinen.", "\"Yanci oldu.\""], "AYIK": ["Durumu anlayan, uyanık.", "\"Ayik oldu.\""], "ARAKÇI": ["Hırsız, eşya yürüten.", "\"Arakçi oldu.\""], "ATARLI": ["Çabuk sinirlenen, kavgacı.", "\"Atarli oldu.\""], "BIYÇKIN": ["Korkusuz kabadayı tavırlı.", "\"Biyçkin oldu.\""], "SAĞMAK": ["Birini kandırıp parasını almak.", "\"Sağmak oldu.\""], "ZIBIDI": ["Gülünç giyinen, ciddiyetsiz.", "\"Zibidi oldu.\""], "ZÜĞÜRT": ["Parası bitmiş, meteliksiz.", "\"Züğürt oldu.\""], "AYARTMA": ["Birini kandırıp saptırma.", "\"Ayartma oldu.\""], "BABALIK": ["Yaşlı kimse (hitap).", "\"Babalik oldu.\""], "BACANAK": ["Yakın arkadaş (hitap).", "\"Bacanak oldu.\""], "CİLLOP": ["Yepyeni, kusursuz, pırıl pırıl.", "\"Ci̇llop oldu.\""], "DÜMENÇ": ["İşini hileyle yürüten.", "\"Dümenç oldu.\""], "GARGARA": ["Meseleyi boş lafla geçiştirme.", "\"Gargara oldu.\""], "HOVARDA": ["Parasını eğlenceye savuran.", "\"Hovarda oldu.\""], "LAFAZAN": ["Çok konuşan, geveze.", "\"Lafazan oldu.\""], "MANİTA": ["Sevgili, flört (argo).", "\"Mani̇ta oldu.\""], "MARTAVAL": ["İnanılması güç yalan.", "\"Martaval oldu.\""], "MUSİBET": ["Uğursuz, sıkıntı veren.", "\"Musi̇bet oldu.\""], "PEŞKEŞ": ["Haksız yere sunma, verme.", "\"Peşkeş oldu.\""], "SERSERİ": ["Başıboş, düzensiz yaşayan.", "\"Serseri̇ oldu.\""], "YILIŞIK": ["Rahatsız edici samimiyet.", "\"Yilişik oldu.\""], "YIRTMAK": ["Zor durumdan kurtulmak.", "\"Yirtmak oldu.\""], "DALAVERE": ["Gizli hileli iş, entrika.", "\"Dalavere oldu.\""], "KELEPİR": ["Değerinden çok ucuza alınan.", "\"Kelepi̇r oldu.\""], "NUMARACI": ["Rol yapan, aldatıcı tip.", "\"Numaraci oldu.\""], "PARAGÖZ": ["Her şeyi paraya bağlayan.", "\"Paragöz oldu.\""], "SABIKALI": ["Suç kaydı olan, güvenilmez.", "\"Sabikali oldu.\""], "TANTANA": ["Gereksiz gürültü ve gösteriş.", "\"Tantana oldu.\""], "YIRTIK": ["Atılgan, kimseden çekinmeyen.", "\"Yirtik oldu.\""], "ZIRTAPOZ": ["Saçma konuşan, saygısız.", "\"Zirtapoz oldu.\""], "ALAMET": ["Çok büyük veya garip şey.", "\"Alamet oldu.\""], "AŞIRMAK": ["Gizlice çalmak, yürütmek.", "\"Aşirmak oldu.\""], "AYARSIZ": ["Davranışları kestirilemeyen.", "\"Ayarsiz oldu.\""], "BEDAVACI": ["Emek harcamadan isteyen.", "\"Bedavaci oldu.\""], "BELALI": ["Kavgacı, başı dertten kurtulmayan.", "\"Belali oldu.\""], "BİTİRİM": ["Çok uyanık, hayatı bilen.", "\"Bi̇ti̇ri̇m oldu.\""], "CADALOZ": ["Kavgacı kadın.", "\"Cadaloz oldu.\""], "ÇAKMA": ["Sahte, taklit ürün.", "\"Çakma oldu.\""], "ÇAPKIN": ["Karşı cinse aşırı düşkün.", "\"Çapkin oldu.\""], "DALGACI": ["İşi ciddiye almayan, alaycı.", "\"Dalgaci oldu.\""], "DEKİZ": ["Gizlice gözetleme.", "\"Deki̇z oldu.\""], "DÖNEK": ["Çıkarına göre saf değiştiren.", "\"Dönek oldu.\""], "DÜMBELEK": ["Akılsız, sersem kişi.", "\"Dümbelek oldu.\""], "FARE": ["Hırsız veya kurnaz kişi.", "\"Fare oldu.\""], "FIRILDAK": ["Sürekli yalan söyleyen, dönek.", "\"Firildak oldu.\""], "FİSTİKO": ["Çok güzel, harika.", "\"Fi̇sti̇ko oldu.\""], "FORS": ["Saygınlık, güç, sözü geçme.", "\"Fors oldu.\""], "GARİBAN": ["Kimsesiz, fakir, acınacak.", "\"Gari̇ban oldu.\""], "GEVŞEK": ["Güvenilmez, ciddiyetsiz.", "\"Gevşek oldu.\""], "GEYİK": ["Boş ve uzun sohbet (Geyik yapmak).", "\"Geyi̇k oldu.\""], "HABABAM": ["Sürekli ve gürültülü yapılan.", "\"Hababam oldu.\""], "HIRBO": ["İri yarı ama akılsız.", "\"Hirbo oldu.\""], "HOKKABAZ": ["İnsanları kandıran, hileci.", "\"Hokkabaz oldu.\""], "HÖDÜK": ["Görgüsüz, kaba kişi.", "\"Hödük oldu.\""], "ISKARTO": ["İşe yaramaz, defolu mal.", "\"Iskarto oldu.\""], "KABADAYI": ["Korkusuz, sert tip.", "\"Kabadayi oldu.\""], "KALLEŞ": ["Arkadan vuran, güvenilmez.", "\"Kalleş oldu.\""], "KAYPAK": ["Sözünde durmayan karakter.", "\"Kaypak oldu.\""], "KERİZLİK": ["Enayilik, safça davranma.", "\"Keri̇zli̇k oldu.\""], "KOPUK": ["Toplumdan kopmuş serseri.", "\"Kopuk oldu.\""], "LAÇKA": ["Gevşemiş, ciddiyeti kalmamış.", "\"Laçka oldu.\""], "LİMONİ": ["Arası bozuk olan, soğukluk.", "\"Li̇moni̇ oldu.\""], "MADARALI": ["Rezil olmuş, kınanmış.", "\"Madarali oldu.\""], "NAYLON": ["Sahte, uydurma, yapay.", "\"Naylon oldu.\""], "NUMARA": ["Oyun, hile (argo: numara yapma).", "\"Numara oldu.\""], "PALAVRA": ["Aslı olmayan abartılı söz.", "\"Palavra oldu.\""], "PAPARA": ["Sert azar, fırça yemek.", "\"Papara oldu.\""], "PASPAL": ["Bakımsız, üstü başı dağınık.", "\"Paspal oldu.\""], "PİŞKİN": ["Utanmaz, rahat kişi.", "\"Pi̇şki̇n oldu.\""], "PİYON": ["Birinin maşası olan.", "\"Pi̇yon oldu.\""], "RACONCU": ["Kuralları koyan, sözü geçen.", "\"Raconcu oldu.\""], "SALLAMA": ["Uydurma, gelişi güzel yapılan.", "\"Sallama oldu.\""], "SAPKIN": ["Doğru yoldan ayrılmış.", "\"Sapkin oldu.\""], "SARSAK": ["Sakar, beceriksiz.", "\"Sarsak oldu.\""], "SERSEFİL": ["Çok perişan, yoksul.", "\"Sersefi̇l oldu.\""], "SİFATSIZ": ["Tipi veya karakteri bozuk.", "\"Si̇fatsiz oldu.\""], "SÜMSÜK": ["Uyuşuk, pısırık kişi.", "\"Sümsük oldu.\""], "ŞAKLABAN": ["İlgi için komiklik yapan.", "\"Şaklaban oldu.\""], "ŞIMARIK": ["Çok yüz verilmiş, disiplinsiz.", "\"Şimarik oldu.\""], "TAKOZ": ["Engel, ilerlemeyi durduran.", "\"Takoz oldu.\""], "TAŞKAFA": ["İnatçı, laf anlamayan.", "\"Taşkafa oldu.\""], "TATAVA": ["Gereksiz, boş konuşma.", "\"Tatava oldu.\""], "TAVLAMAK": ["Kandırarak kendine çekmek.", "\"Tavlamak oldu.\""], "TIRNAKÇI": ["Küçük hırsızlıklar yapan.", "\"Tirnakçi oldu.\""], "TIRSIK": ["Korkak, çekingen.", "\"Tirsik oldu.\""], "TOKATÇI": ["Dolandırıcı, çarpmacı.", "\"Tokatçi oldu.\""], "TORPILLI": ["Kayırılan, arkası sağlam.", "\"Torpilli oldu.\""], "TOZLAMAK": ["Kaçmak, ortadan kaybolmak.", "\"Tozlamak oldu.\""], "TUZAKÇI": ["Oyun kuran, kandıran.", "\"Tuzakçi oldu.\""], "UKALA": ["Kendini çok akıllı sanan.", "\"Ukala oldu.\""], "UYANIK": ["Kurnaz, fırsatçı.", "\"Uyanik oldu.\""], "UYUTMAK": ["Kandırmak, oyalamak.", "\"Uyutmak oldu.\""], "ÜŞÜTÜK": ["Deli dolu, aklından zoru olan.", "\"Üşütük oldu.\""], "VANTUZ": ["Sömüren, yapışan kişi.", "\"Vantuz oldu.\""], "VURGUN": ["Büyük kazanç veya darbe.", "\"Vurgun oldu.\""], "VURGUNCU": ["Haksız kazanç sağlayan.", "\"Vurguncu oldu.\""], "YAĞLAMAK": ["Dalkavukluk yapmak.", "\"Yağlamak oldu.\""], "YALANCI": ["Sürekli yalan söyleyen.", "\"Yalanci oldu.\""], "YAMUKLUK": ["Hata, yanlış, hıyanet.", "\"Yamukluk oldu.\""], "YOLSUZ": ["Parasız veya hile yapan.", "\"Yolsuz oldu.\""], "YONTULMAM": ["Eğitimsiz, kaba kişi.", "\"Yontulmam oldu.\""], "YÜZSÜZ": ["Utanması olmayan.", "\"Yüzsüz oldu.\""], "ZAMPARA": ["Kadın peşinde koşan erkek.", "\"Zampara oldu.\""], "ZARGANA": ["Çok zayıf ve uzun boylu.", "\"Zargana oldu.\""], "ZIBARMAK": ["Uyuyup kalmak veya ölmek.", "\"Zibarmak oldu.\""], "ZORBA": ["Güç kullanarak iş yaptıran.", "\"Zorba oldu.\""], "ZÜBÜK": ["Çıkarı için her şeyi yapan.", "\"Zübük oldu.\""], "ACEMİ": ["Bir işte yeni olan.", "\"Acemi̇ oldu.\""], "AFACAN": ["Yaramaz ama sevimli.", "\"Afacan oldu.\""], "AHMAK": ["Kolay kandırılan, akılsız.", "\"Ahmak oldu.\""], "ALIK": ["Şaşkın, ne yaptığını bilmeyen.", "\"Alik oldu.\""], "AMİGO": ["Destekçi (argo: dalkavuk).", "\"Ami̇go oldu.\""], "ANTİKA": ["Tuhaf, eski kafa.", "\"Anti̇ka oldu.\""], "ARACI": ["İş bitirici, komisyoncu.", "\"Araci oldu.\""], "ARIZA": ["Sorun çıkaran tip.", "\"Ariza oldu.\""], "ASALAK": ["Başkasının sırtından geçinen.", "\"Asalak oldu.\""], "BABA": ["Lider veya koruyucu.", "\"Baba oldu.\""], "BALON": ["Abartılmış, içi boş kişi/iş.", "\"Balon oldu.\""], "BARUT": ["Çok sinirli.", "\"Barut oldu.\""], "BELEŞÇİ": ["Bedavaya konan.", "\"Beleşçi̇ oldu.\""], "BİLMİŞ": ["Çok bildiğini sanan.", "\"Bi̇lmi̇ş oldu.\""], "BİTİK": ["Gücü kalmamış, mahvolmuş.", "\"Bi̇ti̇k oldu.\""], "BOZGUNCU": ["İşleri karıştıran.", "\"Bozguncu oldu.\""], "BUKALEMUN": ["Renk değiştiren sinsi.", "\"Bukalemun oldu.\""], "CANAVAR": ["Yetenekli veya acımasız.", "\"Canavar oldu.\""], "ÇAKMAK": ["Anlamak veya sınavdan kalmak.", "\"Çakmak oldu.\""], "ÇALIM": ["Gösterişli hareket.", "\"Çalim oldu.\""], "DELİ": ["Akıl sağlığı yerinde olmayan.", "\"Deli̇ oldu.\""], "FELEK": ["Şans (Feleği şaşmak).", "\"Felek oldu.\""], "GEVŞEKLİK": ["Güvenilmezlik hali.", "\"Gevşekli̇k oldu.\""], "KAFADAN": ["Düşünmeden veya deli anlamında.", "\"Kafadan oldu.\""], "KAPAROZ": ["Haksız kazanılan şey.", "\"Kaparoz oldu.\""], "KAYPAKLIK": ["Sözde durmamanın adı.", "\"Kaypaklik oldu.\""], "KIYAKÇI": ["İyilikte bulunan, torpilci.", "\"Kiyakçi oldu.\""], "KOLSUZ": ["Beceriksiz (oyun argosu).", "\"Kolsuz oldu.\""], "KUMPASÇI": ["Tuzak kuran, gizli plan yapan.", "\"Kumpasçi oldu.\""], "DESTAN": ["Çok uzun hikaye (abartı).", "\"Destan oldu.\""], "DALGA": ["Alay (Dalga geçmek).", "\"Dalga oldu.\""], "DEHŞET": ["Korkunç veya çok iyi.", "\"Dehşet oldu.\""], "DENGE": ["Kararlılık veya uyanıklık.", "\"Denge oldu.\""]};
+var LEVELS=[["YUH", "KEK"], ["COP", "HAP"], ["TOY", "ÇÜŞ"], ["NAŞ", "FIŞ"], ["CIZ", "FIS"], ["LÜP", "PİK"], ["BAF", "GAK"], ["ŞUT", "FOS"], ["TIP", "GIR"], ["DEV", "DAL"], ["YUH", "AVAL"], ["KEK", "AYIK"], ["COP", "KENE"], ["HAP", "ÇAÇA"], ["TOY", "TIRT"], ["ÇÜŞ", "LOBİ"], ["NAŞ", "PALA"], ["FIŞ", "FORS"], ["CIZ", "HIRT"], ["FIS", "GACI"], ["AVAL", "AYIK"], ["KENE", "ÇAÇA"], ["TIRT", "LOBİ"], ["PALA", "FORS"], ["HIRT", "GACI"], ["GAZİ", "FAÇA"], ["AYAR", "ZULA"], ["FARE", "KEÇE"], ["SOTA", "JİGO"], ["CIRT", "FAKA"], ["ŞİKE", "KIRO"], ["CİKS", "KULP"], ["KRAL", "POTA"], ["FURİ", "DELİ"], ["TAKA", "BABA"], ["KIYAK"], ["DEKİZ"], ["BARUT"], ["TONGA"], ["GAREZ"], ["İKRAM"], ["HAFIZ"], ["ANTEN"], ["JANTİ"], ["KAFES"], ["KOKOZ"], ["APAÇİ"], ["MARİZ"], ["KAPAK"], ["TOKAT"], ["ŞEBEK"], ["AKMAK"], ["DÜMEN"], ["RADAR"], ["ARSIZ"], ["APİKO"], ["MADİK"], ["HANZO"], ["RAMPA"], ["HÖDÜK"], ["LAÇKA"], ["ZORBA"], ["PİYAZ"], ["CIVIK"], ["ÇAKAL"], ["LAVUK"], ["KÖTEK"], ["EKMEK"], ["GICIK"], ["TUZLU"], ["KOPUK"], ["KOFİK"], ["ZIPIR"], ["TAKOZ"], ["SAKSI"], ["YAĞCI"], ["SARIK"], ["ÇÖMEZ"], ["ENAYİ"], ["UKALA"], ["HIRBO"], ["REHİN"], ["KOKOŞ"], ["HIYAR"], ["TIKIR"], ["ACEMİ"], ["FELEK"], ["TAPIŞ"], ["ÇALIM"], ["YAMUK"], ["KAÇAK"], ["AFTOS"], ["SAPAK"], ["SİVİL"], ["HAŞAT"], ["SIVIŞ"], ["BİTİK"], ["VOLTA"], ["KOFTE"], ["MAPUS"], ["DALGA"], ["PELUŞ"], ["KITIR"], ["KERİZ"], ["HANUT"], ["ÇAMUR"], ["ENTEL"], ["ZÜBÜK"], ["ÇAKAR"], ["DÖNEK"], ["PAÇOZ"], ["KIYIM"], ["ARIZA"], ["PASLI"], ["SALÇA"], ["KIRAN"], ["GEYİK"], ["KOLPA"], ["FİRİK"], ["RACON"], ["KANKA"], ["SAZAN"], ["KAZIK"], ["TENHA"], ["YANCI"], ["MAVAL"], ["BARON"], ["ÇAKMA"], ["AHMAK"], ["BALON"], ["PİYON"], ["TORBA"], ["MORUK"], ["DENYO"], ["SİPSİ"], ["MEKAN"], ["HARBI"], ["BELEŞ"], ["PAPEL"], ["ÇARIK"], ["ARACI"], ["AMİGO"], ["DENGE"], ["ZÜĞÜRT"], ["PEŞKEŞ"], ["UYANIK"], ["YAHUDİ"], ["LİMONİ"], ["VURGUN"], ["ALAMET"], ["MADARA"], ["DUBARA"], ["DEHŞET"], ["MATRAK"], ["MANİTA"], ["TATAVA"], ["ZIRZOP"], ["AFACAN"], ["YOLSUZ"], ["SAĞMAK"], ["ARAKÇI"], ["YIRTIK"], ["TÜYMEK"], ["FERTİK"], ["ANTİKA"], ["ÜŞÜTÜK"], ["KAKNEM"], ["YÜZSÜZ"], ["TERTİP"], ["ARAKCI"], ["MASTOR"], ["CİLLOP"], ["NUMARA"], ["ASALAK"], ["KOLSUZ"], ["KALLEŞ"], ["BICKIN"], ["VANTUZ"], ["ABAZAN"], ["NAYLON"], ["PİŞKİN"], ["GEVŞEK"], ["KAYPAK"], ["ANAFOR"], ["ZEVZEK"], ["DANDİK"], ["PİLAKİ"], ["SAGMAK"], ["FİYAKA"], ["BİLMİŞ"], ["BELALI"], ["DÜMENÇ"], ["ATARLI"], ["PAPARA"], ["PASPAL"], ["ZIBIDI"], ["YAVŞAK"], ["SARSAK"], ["MAYTAP"], ["SAPKIN"], ["SÜMSÜK"], ["TIRSIK"], ["ÇAPKIN"], ["ÇAKMAK"], ["PIRPIR"], ["DESTAN"], ["HABABAM"], ["İSPİYON"], ["TAŞKAFA"], ["MUSİBET"], ["ANDAVAL"], ["MÜZEVİR"], ["SERSERİ"], ["TOKATÇI"], ["KELEPİR"], ["YIRTMAK"], ["RACONCU"], ["PALAVRA"], ["TANTANA"], ["GARGARA"], ["BABALIK"], ["UYUTMAK"], ["LAFAZAN"], ["GARİBAN"], ["KAPAROZ"], ["AŞIRMAK"], ["ABANMAK"], ["ZARGANA"], ["ZAMPARA"], ["DALGACI"], ["SALLAMA"], ["AYARTMA"], ["FİSTİKO"], ["KAYARTO"], ["TUZAKÇI"], ["PARAGÖZ"], ["ŞIMARIK"], ["FASARYA"], ["AYNASIZ"], ["ÇAÇARON"], ["KAFADAN"], ["YALANCI"], ["DALLAMA"], ["CANAVAR"], ["CADALOZ"], ["HOVARDA"], ["KOKOROZ"], ["AYARSIZ"], ["KITIRCI"], ["BİTİRİM"], ["ISKARTO"], ["KIYAKÇI"], ["BIYÇKIN"], ["BACANAK"], ["KAMANÇO"], ["YILIŞIK"], ["BELEŞÇİ"], ["HOKKABAZ"], ["YAĞLAMAK"], ["KERİZLİK"], ["KUMPASÇI"], ["ZIRTAPOZ"], ["SABIKALI"], ["MARTAVAL"], ["ALABANDA"], ["FIRILDAK"], ["KABADAYI"], ["NUMARACI"], ["SIFATSIZ"], ["BOZGUNCU"], ["TAVLAMAK"], ["BEDAVACI"], ["SİFATSIZ"], ["TIRNAKÇI"], ["KÜLÜSTÜR"], ["TORPILLI"], ["YAMUKLUK"], ["DALAVERE"], ["TOZLAMAK"], ["SERSEFİL"], ["MADARALI"], ["ŞAKLABAN"], ["ZIBARMAK"], ["ATMASYON"], ["DÜMBELEK"], ["VURGUNCU"], ["ARAKLAMAK"], ["BUKALEMUN"], ["YONTULMAM"], ["HACILAMAK"], ["ZAMAZİNGO"], ["KAYPAKLIK"], ["GEVŞEKLİK"], ["CİBİLİYETSİZ"], ["VİTAMİNSİZ"], ["TAHTALIKöY"]];
+var BG=["data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNWFiOGY4Ii8+PHN0b3Agb2Zmc2V0PSI0MCUiIHN0b3AtY29sb3I9IiM3Y2NmZmYiLz48c3RvcCBvZmZzZXQ9Ijc1JSIgc3RvcC1jb2xvcj0iI2YwYzg3OCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2U4OTU0YSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNzAwIiBmaWxsPSJ1cmwoI3MpIi8+PGVsbGlwc2UgY3g9IjgwIiBjeT0iMTIwIiByeD0iNzAiIHJ5PSIyMiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjc1Ii8+PGVsbGlwc2UgY3g9IjQwIiBjeT0iMTE1IiByeD0iNDUiIHJ5PSIxOCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjYiLz48ZWxsaXBzZSBjeD0iMzEwIiBjeT0iOTUiIHJ4PSI4MCIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxlbGxpcHNlIGN4PSIzNjAiIGN5PSI5MCIgcng9IjUwIiByeT0iMTYiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii42Ii8+PGVsbGlwc2UgY3g9IjIwMCIgY3k9IjYyMCIgcng9IjI2MCIgcnk9IjgwIiBmaWxsPSIjZDQ4NDRhIiBvcGFjaXR5PSIuNSIvPjxyZWN0IHg9IjAiIHk9IjU4MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNiODc4MzgiLz48cmVjdCB4PSIyMCIgeT0iNDIwIiB3aWR0aD0iNTUiIGhlaWdodD0iMTY1IiBmaWxsPSIjYzA5MDYwIiByeD0iNCIvPjxyZWN0IHg9IjMyNSIgeT0iNDM1IiB3aWR0aD0iNjAiIGhlaWdodD0iMTUwIiBmaWxsPSIjYzA5MDYwIiByeD0iNCIvPjxyZWN0IHg9IjE3OCIgeT0iMjQwIiB3aWR0aD0iNTIiIGhlaWdodD0iMzQwIiBmaWxsPSIjOWE3MDQwIiByeD0iOCIgb3BhY2l0eT0iLjQiLz48cmVjdCB4PSIxNzQiIHk9IjIzNiIgd2lkdGg9IjUyIiBoZWlnaHQ9IjM0MCIgZmlsbD0iI2M4YTA2MCIgcng9IjgiLz48cmVjdCB4PSIxODgiIHk9IjI2MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjgiLz48cmVjdCB4PSIyMDIiIHk9IjI2MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjgiLz48cmVjdCB4PSIxODgiIHk9IjI5NSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjciLz48cmVjdCB4PSIyMDIiIHk9IjI5NSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjciLz48cmVjdCB4PSIxODgiIHk9IjMzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjciLz48cmVjdCB4PSIyMDIiIHk9IjMzMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjYiLz48cmVjdCB4PSIxODgiIHk9IjM2NSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjZThkMDkwIiByeD0iMiIgb3BhY2l0eT0iLjYiLz48cmVjdCB4PSIxNzAiIHk9IjIzMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjYjg5MDUwIiByeD0iMyIvPjxyZWN0IHg9IjE2NyIgeT0iMjE4IiB3aWR0aD0iNjYiIGhlaWdodD0iMTQiIGZpbGw9IiNjOGEwNjAiIHJ4PSI0Ii8+PHJlY3QgeD0iMTcwIiB5PSIyMDAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMiIgZmlsbD0iI2MwYTA1MCIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iMjAwIiByeD0iMzAiIHJ5PSIxMCIgZmlsbD0iI2E4Nzg0MCIvPjxyZWN0IHg9IjE4MyIgeT0iMTU1IiB3aWR0aD0iMzQiIGhlaWdodD0iNTAiIGZpbGw9IiNjOGEwNjAiIHJ4PSI0Ii8+PGVsbGlwc2UgY3g9IjIwMCIgY3k9IjE1NSIgcng9IjE3IiByeT0iNyIgZmlsbD0iI2E4Nzg0MCIvPjxwb2x5Z29uIHBvaW50cz0iMjAwLDExNSAxODQsMTU4IDIxNiwxNTgiIGZpbGw9IiM4YjQ4MjAiLz48cmVjdCB4PSIxOTciIHk9IjEwMCIgd2lkdGg9IjYiIGhlaWdodD0iMTgiIGZpbGw9IiNkNGEwMzAiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSI5OCIgcj0iNSIgZmlsbD0iI2Y1YzUxOCIvPjxlbGxpcHNlIGN4PSIxNTUiIGN5PSI1NzUiIHJ4PSI0MCIgcnk9IjE1IiBmaWxsPSIjNWE5YTNhIiBvcGFjaXR5PSIuOCIvPjxlbGxpcHNlIGN4PSIyNDgiIGN5PSI1NzAiIHJ4PSIzNSIgcnk9IjE0IiBmaWxsPSIjNGE4YTJhIiBvcGFjaXR5PSIuOCIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGFhYWYwIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiM3OGM4ZjgiLz48c3RvcCBvZmZzZXQ9IjgwJSIgc3RvcC1jb2xvcj0iI2QwZThmOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2E4ZDRmMCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJzZWEiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMzg5OGQ4Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTg2OGE4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI3MDAiIGZpbGw9InVybCgjcykiLz48ZWxsaXBzZSBjeD0iNjAiIGN5PSIxMTAiIHJ4PSI3NSIgcnk9IjIyIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuOCIvPjxlbGxpcHNlIGN4PSIyMCIgY3k9IjEwNSIgcng9IjQ1IiByeT0iMTgiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii42NSIvPjxlbGxpcHNlIGN4PSIzMzAiIGN5PSI4NSIgcng9Ijg1IiByeT0iMjAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii43NSIvPjxyZWN0IHg9IjIwIiB5PSIzOTAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzkwYzBlMCIgb3BhY2l0eT0iLjUiIHJ4PSIzIi8+PHJlY3QgeD0iNjAiIHk9IjM3NSIgd2lkdGg9IjI1IiBoZWlnaHQ9IjY1IiBmaWxsPSIjOTBjMGUwIiBvcGFjaXR5PSIuNSIgcng9IjMiLz48cmVjdCB4PSIzMjAiIHk9IjM4NSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjU1IiBmaWxsPSIjOTBjMGUwIiBvcGFjaXR5PSIuNSIgcng9IjMiLz48cmVjdCB4PSIwIiB5PSI0ODAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMjIwIiBmaWxsPSJ1cmwoI3NlYSkiLz48cGF0aCBkPSJNMCA0OTIgUTUwIDQ4NSAxMDAgNDkyIFExNTAgNDk5IDIwMCA0OTIgUTI1MCA0ODUgMzAwIDQ5MiBRMzUwIDQ5OSA0MDAgNDkyIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MGIwZTgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiLz48cGF0aCBkPSJNMCA1MTAgUTUwIDUwMyAxMDAgNTEwIFExNTAgNTE3IDIwMCA1MTAgUTI1MCA1MDMgMzAwIDUxMCBRMzUwIDUxNyA0MDAgNTEwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MGIwZTgiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIuMzUiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iNDkwIiByeD0iNDUiIHJ5PSIxNCIgZmlsbD0iI2M4YTA2MCIvPjxyZWN0IHg9IjE4MiIgeT0iMzMwIiB3aWR0aD0iMzYiIGhlaWdodD0iMTYyIiBmaWxsPSIjZDRiMDcwIiByeD0iNSIvPjxsaW5lIHgxPSIxODIiIHkxPSIzNTUiIHgyPSIyMTgiIHkyPSIzNTUiIHN0cm9rZT0iI2I4OTA0OCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIuNiIvPjxsaW5lIHgxPSIxODIiIHkxPSIzODAiIHgyPSIyMTgiIHkyPSIzODAiIHN0cm9rZT0iI2I4OTA0OCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIuNiIvPjxsaW5lIHgxPSIxODIiIHkxPSI0MDUiIHgyPSIyMTgiIHkyPSI0MDUiIHN0cm9rZT0iI2I4OTA0OCIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIuNSIvPjxyZWN0IHg9IjE4OSIgeT0iMzQzIiB3aWR0aD0iOSIgaGVpZ2h0PSIxMyIgZmlsbD0iI2U4ZDg5OCIgcng9IjIiIG9wYWNpdHk9Ii44NSIvPjxyZWN0IHg9IjIwMiIgeT0iMzQzIiB3aWR0aD0iOSIgaGVpZ2h0PSIxMyIgZmlsbD0iI2U4ZDg5OCIgcng9IjIiIG9wYWNpdHk9Ii44NSIvPjxyZWN0IHg9IjE4OSIgeT0iMzY4IiB3aWR0aD0iOSIgaGVpZ2h0PSIxMyIgZmlsbD0iI2U4ZDg5OCIgcng9IjIiIG9wYWNpdHk9Ii43NSIvPjxyZWN0IHg9IjIwMiIgeT0iMzY4IiB3aWR0aD0iOSIgaGVpZ2h0PSIxMyIgZmlsbD0iI2U4ZDg5OCIgcng9IjIiIG9wYWNpdHk9Ii43NSIvPjxyZWN0IHg9IjE3OCIgeT0iMzIwIiB3aWR0aD0iNDQiIGhlaWdodD0iMTMiIGZpbGw9IiNiODkwNDgiIHJ4PSIzIi8+PHJlY3QgeD0iMTc1IiB5PSIzMDYiIHdpZHRoPSI1MCIgaGVpZ2h0PSIxNiIgZmlsbD0iI2M4YTA1OCIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iMzA2IiByeD0iMjUiIHJ5PSI5IiBmaWxsPSIjYTg3ODM4Ii8+PHJlY3QgeD0iMTg1IiB5PSIyNjUiIHdpZHRoPSIzMCIgaGVpZ2h0PSI0NCIgZmlsbD0iI2M4YTA1OCIgcng9IjQiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iMjY1IiByeD0iMTUiIHJ5PSI2IiBmaWxsPSIjYTg3ODM4Ii8+PHBvbHlnb24gcG9pbnRzPSIyMDAsMjI4IDE4NiwyNjggMjE0LDI2OCIgZmlsbD0iIzhiNDAyMCIvPjxyZWN0IHg9IjE5NyIgeT0iMjE0IiB3aWR0aD0iNiIgaGVpZ2h0PSIxNyIgZmlsbD0iI2Q0YTAzMCIvPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjIxMiIgcj0iNSIgZmlsbD0iI2Y1YzUxOCIvPjxyZWN0IHg9IjE5NSIgeT0iNDkwIiB3aWR0aD0iMTAiIGhlaWdodD0iOTAiIGZpbGw9IiNjOGEwNTgiIG9wYWNpdHk9Ii4yIi8+PC9zdmc+", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNThiOGYwIi8+PHN0b3Agb2Zmc2V0PSI1NSUiIHN0b3AtY29sb3I9IiM4OGQwZmYiLz48c3RvcCBvZmZzZXQ9IjgwJSIgc3RvcC1jb2xvcj0iI2YwZDg5OCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2U4YjA2MCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJnciIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4YWI4NzAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM1YTg4NDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzKSIvPjxlbGxpcHNlIGN4PSI3MCIgY3k9IjEwMCIgcng9IjgwIiByeT0iMjIiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii44Ii8+PGVsbGlwc2UgY3g9IjI1IiBjeT0iOTUiIHJ4PSI1MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNjUiLz48ZWxsaXBzZSBjeD0iMzIwIiBjeT0iODAiIHJ4PSI5MCIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iNTYwIiByeD0iMjAwIiByeT0iNDAiIGZpbGw9IiM5MGMwNjgiIG9wYWNpdHk9Ii42Ii8+PHJlY3QgeD0iMCIgeT0iNTQ1IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1NSIgZmlsbD0idXJsKCNncikiLz48ZWxsaXBzZSBjeD0iMjAwIiBjeT0iNTYwIiByeD0iODAiIHJ5PSIxOCIgZmlsbD0iI2Q0Yzg5MCIgb3BhY2l0eT0iLjYiLz48cmVjdCB4PSI3NSIgeT0iMzkwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE2NSIgZmlsbD0iI2U4ZGNjMCIgcng9IjgiLz48cmVjdCB4PSI3MCIgeT0iMzg0IiB3aWR0aD0iMjYwIiBoZWlnaHQ9IjEyIiBmaWxsPSIjZDRjOGEwIiByeD0iNCIvPjxlbGxpcHNlIGN4PSIyMDAiIGN5PSIzMTAiIHJ4PSI4MiIgcnk9IjgyIiBmaWxsPSIjZDRjODk4Ii8+PGVsbGlwc2UgY3g9IjIwMCIgY3k9IjM0MCIgcng9IjgyIiByeT0iMzAiIGZpbGw9IiNjNGI4ODgiLz48ZWxsaXBzZSBjeD0iMTM4IiBjeT0iMzc4IiByeD0iNTAiIHJ5PSI0MCIgZmlsbD0iI2NjYzI5OCIvPjxlbGxpcHNlIGN4PSIyNjIiIGN5PSIzNzgiIHJ4PSI1MCIgcnk9IjQwIiBmaWxsPSIjY2NjMjk4Ii8+PHJlY3QgeD0iNjMiIHk9IjIxNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iI2RjZDBhOCIgcng9IjUiLz48cmVjdCB4PSI1OCIgeT0iMjEyIiB3aWR0aD0iMzAiIGhlaWdodD0iOCIgZmlsbD0iI2M4YmM5MCIgcng9IjIiLz48cmVjdCB4PSI2MyIgeT0iMTk1IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiNkY2QwYTgiIHJ4PSIzIi8+PHBvbHlnb24gcG9pbnRzPSI3MywxNzAgNjMsMTk2IDgzLDE5NiIgZmlsbD0iI2M4Nzg0MCIvPjxjaXJjbGUgY3g9IjczIiBjeT0iMTY3IiByPSI1IiBmaWxsPSIjZjVjNTE4Ii8+PHJlY3QgeD0iMzE3IiB5PSIyMTUiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMjUiIGZpbGw9IiNkY2QwYTgiIHJ4PSI1Ii8+PHJlY3QgeD0iMzEyIiB5PSIyMTIiIHdpZHRoPSIzMCIgaGVpZ2h0PSI4IiBmaWxsPSIjYzhiYzkwIiByeD0iMiIvPjxyZWN0IHg9IjMxNyIgeT0iMTk1IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiNkY2QwYTgiIHJ4PSIzIi8+PHBvbHlnb24gcG9pbnRzPSIzMjcsMTcwIDMxNywxOTYgMzM3LDE5NiIgZmlsbD0iI2M4Nzg0MCIvPjxjaXJjbGUgY3g9IjMyNyIgY3k9IjE2NyIgcj0iNSIgZmlsbD0iI2Y1YzUxOCIvPjxyZWN0IHg9IjExOCIgeT0iMjQ4IiB3aWR0aD0iMTYiIGhlaWdodD0iMTkyIiBmaWxsPSIjZGNkMGE4IiByeD0iNCIvPjxwb2x5Z29uIHBvaW50cz0iMTI2LDIzMCAxMTgsMjUwIDEzNCwyNTAiIGZpbGw9IiNjODc4NDAiLz48Y2lyY2xlIGN4PSIxMjYiIGN5PSIyMjciIHI9IjQiIGZpbGw9IiNmNWM1MTgiLz48cmVjdCB4PSIyNjYiIHk9IjI0OCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE5MiIgZmlsbD0iI2RjZDBhOCIgcng9IjQiLz48cG9seWdvbiBwb2ludHM9IjI3NCwyMzAgMjY2LDI1MCAyODIsMjUwIiBmaWxsPSIjYzg3ODQwIi8+PGNpcmNsZSBjeD0iMjc0IiBjeT0iMjI3IiByPSI0IiBmaWxsPSIjZjVjNTE4Ii8+PHJlY3QgeD0iMTc1IiB5PSI0MzUiIHdpZHRoPSI1MCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNjOGJjOTAiIHJ4PSI1Ii8+PHBhdGggZD0iTTE3NSA0NTUgUTIwMCA0MzggMjI1IDQ1NSIgZmlsbD0iI2I4YWM4MCIvPjxyZWN0IHg9IjkwIiB5PSI0MDIiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2IwYTg3MCIgcng9IjMiIG9wYWNpdHk9Ii43Ii8+PHJlY3QgeD0iMTIwIiB5PSI0MDIiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2IwYTg3MCIgcng9IjMiIG9wYWNpdHk9Ii43Ii8+PHJlY3QgeD0iMzgiIHk9IjUwMCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjOGE2MDMwIi8+PGVsbGlwc2UgY3g9IjQzIiBjeT0iNDk1IiByeD0iMjIiIHJ5PSIyOCIgZmlsbD0iIzRhOGEyOCIvPjxyZWN0IHg9IjM1MiIgeT0iNTA1IiB3aWR0aD0iMTAiIGhlaWdodD0iNDUiIGZpbGw9IiM4YTYwMzAiLz48ZWxsaXBzZSBjeD0iMzU3IiBjeT0iNTAwIiByeD0iMjIiIHJ5PSIyOCIgZmlsbD0iIzRhOGEyOCIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNGFiMGYwIi8+PHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiM4MGNjZmYiLz48c3RvcCBvZmZzZXQ9Ijg1JSIgc3RvcC1jb2xvcj0iI2IwZDhmOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2QwZThmOCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJzZWEiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNDBhMGQwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTg3MGE4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI3MDAiIGZpbGw9InVybCgjcykiLz48ZWxsaXBzZSBjeD0iOTAiIGN5PSIxMTUiIHJ4PSI4NSIgcnk9IjI0IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuODUiLz48ZWxsaXBzZSBjeD0iNDAiIGN5PSIxMTAiIHJ4PSI1NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxlbGxpcHNlIGN4PSIzMTAiIGN5PSI5MCIgcng9IjkwIiByeT0iMjIiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii44Ii8+PHBhdGggZD0iTTAgNDQwIFExMDAgMzgwIDIwMCA0MDAgUTMwMCAzNjAgNDAwIDM5MCBMNDAwIDcwMCBMMCA3MDBaIiBmaWxsPSIjODBiODY4IiBvcGFjaXR5PSIuNiIvPjxwYXRoIGQ9Ik0wIDQ2MCBRMTIwIDQxMCAyNDAgNDMwIFEzMjAgNDEwIDQwMCA0MjAgTDQwMCA3MDAgTDAgNzAwWiIgZmlsbD0iIzkwYzg3OCIgb3BhY2l0eT0iLjciLz48cmVjdCB4PSIwIiB5PSI1MTAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMTkwIiBmaWxsPSJ1cmwoI3NlYSkiLz48cGF0aCBkPSJNMCA1MjIgUTEwMCA1MTQgMjAwIDUyMiBRMzAwIDUzMCA0MDAgNTIyIiBmaWxsPSJub25lIiBzdHJva2U9IiM3MGJjZTAiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiLz48cmVjdCB4PSIwIiB5PSIzOTAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAiIGZpbGw9IiNjMGI4OTAiIHJ4PSIyIi8+PHJlY3QgeD0iMCIgeT0iMzg1IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjgiIGZpbGw9IiNkMGM4YTAiIHJ4PSIxIi8+PHJlY3QgeD0iNDIiIHk9IjIxNSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Q0YzhhMCIgcng9IjQiLz48cmVjdCB4PSIzOCIgeT0iMjExIiB3aWR0aD0iNDMiIGhlaWdodD0iMTAiIGZpbGw9IiNjMGI0ODAiIHJ4PSIyIi8+PHJlY3QgeD0iNDIiIHk9IjE5MCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjI1IiBmaWxsPSIjZDRjOGEwIiByeD0iMyIvPjxyZWN0IHg9IjQ2IiB5PSIxNzAiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyMiIgZmlsbD0iI2Q0YzhhMCIgcng9IjMiLz48cmVjdCB4PSI1MCIgeT0iMTUyIiB3aWR0aD0iMTkiIGhlaWdodD0iMjAiIGZpbGw9IiNkNGM4YTAiIHJ4PSIyIi8+PGNpcmNsZSBjeD0iNTkiIGN5PSIxNDgiIHI9IjYiIGZpbGw9IiNmNWM1MTgiLz48cmVjdCB4PSIzMjMiIHk9IjIxNSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Q0YzhhMCIgcng9IjQiLz48cmVjdCB4PSIzMTkiIHk9IjIxMSIgd2lkdGg9IjQzIiBoZWlnaHQ9IjEwIiBmaWxsPSIjYzBiNDgwIiByeD0iMiIvPjxyZWN0IHg9IjMyMyIgeT0iMTkwIiB3aWR0aD0iMzUiIGhlaWdodD0iMjUiIGZpbGw9IiNkNGM4YTAiIHJ4PSIzIi8+PHJlY3QgeD0iMzI3IiB5PSIxNzAiIHdpZHRoPSIyNyIgaGVpZ2h0PSIyMiIgZmlsbD0iI2Q0YzhhMCIgcng9IjMiLz48cmVjdCB4PSIzMzEiIHk9IjE1MiIgd2lkdGg9IjE5IiBoZWlnaHQ9IjIwIiBmaWxsPSIjZDRjOGEwIiByeD0iMiIvPjxjaXJjbGUgY3g9IjM0MSIgY3k9IjE0OCIgcj0iNiIgZmlsbD0iI2Y1YzUxOCIvPjxwYXRoIGQ9Ik01OSAxNTIgUTIwMCAyOTUgMzQxIDE1MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTA5MDcwIiBzdHJva2Utd2lkdGg9IjMuNSIgb3BhY2l0eT0iLjkiLz48cGF0aCBkPSJNNTkgMTUyIFEyMDAgMzE1IDM0MSAxNTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2EwOTA3MCIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIuNTUiLz48bGluZSB4MT0iOTUiIHkxPSIyMjAiIHgyPSI5NSIgeTI9IjM5MyIgc3Ryb2tlPSIjYjBhODc4IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iLjUiLz48bGluZSB4MT0iMTU1IiB5MT0iMjU2IiB4Mj0iMTU1IiB5Mj0iMzkzIiBzdHJva2U9IiNiMGE4NzgiIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIuNSIvPjxsaW5lIHgxPSIyMDAiIHkxPSIyNjUiIHgyPSIyMDAiIHkyPSIzOTMiIHN0cm9rZT0iI2IwYTg3OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9Ii41Ii8+PGxpbmUgeDE9IjI0NSIgeTE9IjI1NiIgeDI9IjI0NSIgeTI9IjM5MyIgc3Ryb2tlPSIjYjBhODc4IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iLjUiLz48bGluZSB4MT0iMzA1IiB5MT0iMjIwIiB4Mj0iMzA1IiB5Mj0iMzkzIiBzdHJva2U9IiNiMGE4NzgiIHN0cm9rZS13aWR0aD0iMS4yIiBvcGFjaXR5PSIuNSIvPjxyZWN0IHg9IjEzMCIgeT0iMzg3IiB3aWR0aD0iMjgiIGhlaWdodD0iMTAiIGZpbGw9IiNlMDU4MzAiIHJ4PSIyIi8+PHJlY3QgeD0iMjMwIiB5PSIzODciIHdpZHRoPSIyOCIgaGVpZ2h0PSIxMCIgZmlsbD0iIzM4NzhjOCIgcng9IjIiLz48L3N2Zz4=", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNWFiOGY4Ii8+PHN0b3Agb2Zmc2V0PSI1NSUiIHN0b3AtY29sb3I9IiM4OGQwZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiOGUwZmYiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0icm9hZCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNhMDkwODAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3MDYwNTAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzKSIvPjxlbGxpcHNlIGN4PSI4MCIgY3k9IjEwNSIgcng9Ijc1IiByeT0iMjAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii43NSIvPjxlbGxpcHNlIGN4PSIzMjAiIGN5PSI4OCIgcng9IjgwIiByeT0iMTgiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii43Ii8+PHJlY3QgeD0iMCIgeT0iNTkwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjExMCIgZmlsbD0idXJsKCNyb2FkKSIvPjxyZWN0IHg9IjAiIHk9IjU4NSIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI3IiBmaWxsPSIjYjBhMDkwIiBvcGFjaXR5PSIuOCIvPjxyZWN0IHg9IjAiIHk9IjI3MCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjMyNSIgZmlsbD0iI2MwNjg0OCIvPjxyZWN0IHg9IjAiIHk9IjI2NCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjkiIGZpbGw9IiNkNDc4NTgiLz48cmVjdCB4PSI4IiB5PSIyODQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIzMCIgZmlsbD0iI2U4Yzg5MCIgcng9IjMiLz48cmVjdCB4PSIzNiIgeT0iMjg0IiB3aWR0aD0iMjAiIGhlaWdodD0iMzAiIGZpbGw9IiNlOGM4OTAiIHJ4PSIzIi8+PHJlY3QgeD0iOCIgeT0iMzMwIiB3aWR0aD0iMjAiIGhlaWdodD0iMzAiIGZpbGw9IiNlOGM4OTAiIHJ4PSIzIi8+PHJlY3QgeD0iMzYiIHk9IjMzMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjMwIiBmaWxsPSIjZThjODkwIiByeD0iMyIvPjxyZWN0IHg9IjcyIiB5PSIyMzUiIHdpZHRoPSI4MCIgaGVpZ2h0PSIzNjAiIGZpbGw9IiM0ODc4YjgiLz48cmVjdCB4PSI3MiIgeT0iMjI4IiB3aWR0aD0iODAiIGhlaWdodD0iMTAiIGZpbGw9IiM1ODg4YzgiLz48cmVjdCB4PSI4MyIgeT0iMjQ4IiB3aWR0aD0iMjIiIGhlaWdodD0iMzIiIGZpbGw9IiNiOGQ4ZjAiIHJ4PSIzIi8+PHJlY3QgeD0iMTE4IiB5PSIyNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMiIgZmlsbD0iI2I4ZDhmMCIgcng9IjMiLz48cmVjdCB4PSI4MyIgeT0iMzAwIiB3aWR0aD0iMjIiIGhlaWdodD0iMzIiIGZpbGw9IiNiOGQ4ZjAiIHJ4PSIzIi8+PHJlY3QgeD0iMTE4IiB5PSIzMDAiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMiIgZmlsbD0iI2I4ZDhmMCIgcng9IjMiLz48cmVjdCB4PSIxNTIiIHk9IjI0OCIgd2lkdGg9IjcyIiBoZWlnaHQ9IjM0NyIgZmlsbD0iI2Q0YTAzMCIvPjxyZWN0IHg9IjE1MiIgeT0iMjQxIiB3aWR0aD0iNzIiIGhlaWdodD0iMTAiIGZpbGw9IiNlOGI4NDAiLz48cmVjdCB4PSIxNjIiIHk9IjI2MiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjI4IiBmaWxsPSIjZmZmNWMwIiByeD0iMyIvPjxyZWN0IHg9IjE5NiIgeT0iMjYyIiB3aWR0aD0iMjAiIGhlaWdodD0iMjgiIGZpbGw9IiNmZmY1YzAiIHJ4PSIzIi8+PHJlY3QgeD0iMTYyIiB5PSIzMDgiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2ZmZjVjMCIgcng9IjMiLz48cmVjdCB4PSIxOTYiIHk9IjMwOCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjI4IiBmaWxsPSIjZmZmNWMwIiByeD0iMyIvPjxyZWN0IHg9IjIyNCIgeT0iMjU1IiB3aWR0aD0iNzgiIGhlaWdodD0iMzQwIiBmaWxsPSIjYTg0OGEwIi8+PHJlY3QgeD0iMjI0IiB5PSIyNDgiIHdpZHRoPSI3OCIgaGVpZ2h0PSIxMCIgZmlsbD0iI2MwNThiOCIvPjxyZWN0IHg9IjIzNCIgeT0iMjcwIiB3aWR0aD0iMjIiIGhlaWdodD0iMzAiIGZpbGw9IiNmMGI4ZjAiIHJ4PSIzIi8+PHJlY3QgeD0iMjcwIiB5PSIyNzAiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgZmlsbD0iI2YwYjhmMCIgcng9IjMiLz48cmVjdCB4PSIzMDIiIHk9IjI2MiIgd2lkdGg9Ijk4IiBoZWlnaHQ9IjMzMyIgZmlsbD0iIzNhOTg0OCIvPjxyZWN0IHg9IjMwMiIgeT0iMjU1IiB3aWR0aD0iOTgiIGhlaWdodD0iMTAiIGZpbGw9IiM0YWFjNTgiLz48cmVjdCB4PSIzMTQiIHk9IjI3NiIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiBmaWxsPSIjYjhmMGMwIiByeD0iMyIvPjxyZWN0IHg9IjM1MCIgeT0iMjc2IiB3aWR0aD0iMjIiIGhlaWdodD0iMzAiIGZpbGw9IiNiOGYwYzAiIHJ4PSIzIi8+PHJlY3QgeD0iMTk2IiB5PSI0NjgiIHdpZHRoPSI4IiBoZWlnaHQ9IjEyNSIgZmlsbD0iIzgwNzA2MCIvPjxwYXRoIGQ9Ik0yMDAgNDY4IFExODQgNDU4IDE4MiA0NzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzgwNzA2MCIgc3Ryb2tlLXdpZHRoPSI1Ii8+PGNpcmNsZSBjeD0iMTgxIiBjeT0iNDcyIiByPSIxMCIgZmlsbD0iI2ZmZjhjMCIgb3BhY2l0eT0iLjkiLz48bGluZSB4MT0iNzIiIHkxPSIzMDUiIHgyPSIxNTIiIHkyPSIzMTUiIHN0cm9rZT0iI2QwYjg5OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9Ii43Ii8+PGxpbmUgeDE9IjIyNCIgeTE9IjI5NSIgeDI9IjMwMiIgeTI9IjMwNSIgc3Ryb2tlPSIjZDBiODk4IiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iLjciLz48L3N2Zz4=", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMwIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU4YjBmMCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjOTBkMGZmIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNmMGMwNjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMDkwNGEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzMCkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU0MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNiODc4MzgiLz4KPGVsbGlwc2UgY3g9IjEzMCIgY3k9IjM3MCIgcng9IjY1IiByeT0iNTUiIGZpbGw9IiNkNGM4OTgiLz4KPHJlY3QgeD0iNjUiIHk9IjM3MCIgd2lkdGg9IjEzMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNkNGM4OTgiLz4KPHJlY3QgeD0iNjIiIHk9IjI0MiIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4OCIgZmlsbD0iI2RkZDBhOCIgcng9IjQiLz4KPHBvbHlnb24gcG9pbnRzPSI3MSwyMjUgNjIsMjQ0IDgwLDI0NCIgZmlsbD0iI2M4Nzg0MCIvPgo8Y2lyY2xlIGN4PSI3MSIgY3k9IjIyMiIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8cmVjdCB4PSIxNzgiIHk9IjI1NSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE3NSIgZmlsbD0iI2RkZDBhOCIgcng9IjQiLz4KPHBvbHlnb24gcG9pbnRzPSIxODcsMjM4IDE3OCwyNTcgMTk2LDI1NyIgZmlsbD0iI2M4Nzg0MCIvPgo8Y2lyY2xlIGN4PSIxODciIGN5PSIyMzUiIHI9IjQiIGZpbGw9IiNmNWM1MTgiLz4KPHJlY3QgeD0iMCIgeT0iNDkwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIxMCIgZmlsbD0iIzM4OThkOCIvPgo8cGF0aCBkPSJNMCA1MDIgUTEwMCA0OTQgMjAwIDUwMiBRMzAwIDUxMCA0MDAgNTAyIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MGI4ZTgiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiLz4KPGVsbGlwc2UgY3g9IjEwMCIgY3k9IjUwNiIgcng9IjQ1IiByeT0iMTEiIGZpbGw9IiNkNGMwOTAiLz4KPHJlY3QgeD0iNjIiIHk9IjQ5MCIgd2lkdGg9Ijc2IiBoZWlnaHQ9IjE4IiBmaWxsPSIjZTBjY2EwIiByeD0iNCIvPgo8ZWxsaXBzZSBjeD0iMzEwIiBjeT0iNTEwIiByeD0iNDAiIHJ5PSIxMCIgZmlsbD0iI2Q0YzA5MCIvPgo8cmVjdCB4PSIyNzciIHk9IjQ5NCIgd2lkdGg9IjY2IiBoZWlnaHQ9IjE3IiBmaWxsPSIjZTBjY2EwIiByeD0iMyIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMxIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzcwYzhmOCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjYTBlMGZmIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNkMGYwYTAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM5MGMwNjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzMSkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU1NSIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDUiIGZpbGw9IiM1YTk4MzgiLz4KPHJlY3QgeD0iMCIgeT0iNDgwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNTBiOGQ4Ii8+CjxlbGxpcHNlIGN4PSIyODAiIGN5PSIzMzAiIHJ4PSI3MCIgcnk9IjU4IiBmaWxsPSIjYzhjMDk4Ii8+CjxyZWN0IHg9IjI1OCIgeT0iMTc4IiB3aWR0aD0iMTQiIGhlaWdodD0iMjAyIiBmaWxsPSIjY2NjMDk4IiByeD0iMyIvPgo8cG9seWdvbiBwb2ludHM9IjI2NSwxNjIgMjU4LDE4MCAyNzIsMTgwIiBmaWxsPSIjYzg3ODQwIi8+CjxjaXJjbGUgY3g9IjI2NSIgY3k9IjE1OSIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8cmVjdCB4PSIzMDgiIHk9IjE5MiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE4OCIgZmlsbD0iI2NjYzA5OCIgcng9IjMiLz4KPHBvbHlnb24gcG9pbnRzPSIzMTUsMTc2IDMwOCwxOTQgMzIyLDE5NCIgZmlsbD0iI2M4Nzg0MCIvPgo8Y2lyY2xlIGN4PSIzMTUiIGN5PSIxNzMiIHI9IjQiIGZpbGw9IiNmNWM1MTgiLz4KPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjQ4OCIgcng9IjU4IiByeT0iMTIiIGZpbGw9IiNkNGM4OTAiLz4KPHJlY3QgeD0iMTAwIiB5PSI0NzIiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTgiIGZpbGw9IiNlMGQwOTgiIHJ4PSI0Ii8+PC9zdmc+", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMyIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFhMzg3OCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjMjg1OGE4Ii8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiM0ODg4ZDgiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxYTMwNjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzMikiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU2MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiMxYTMwNjAiLz4KPHJlY3QgeD0iMCIgeT0iNDgwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9Ijg1IiBmaWxsPSIjMGEyMDUwIi8+CjxwYXRoIGQ9Ik0wIDM1MCBRMjAwIDMwMCA0MDAgMzUwIiBmaWxsPSJub25lIiBzdHJva2U9IiNjMGI4ODgiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iLjUiLz4KPHJlY3QgeD0iMCIgeT0iMzUwIiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE4IiBmaWxsPSIjMjA0MGEwIiBvcGFjaXR5PSIuNiIvPgo8cmVjdCB4PSIxMzAiIHk9IjM0MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxNDUiIGZpbGw9IiMxYTI4NDgiLz4KPGVsbGlwc2UgY3g9IjIwMCIgY3k9IjI4NSIgcng9IjY1IiByeT0iNjAiIGZpbGw9IiMxZTMwNTUiLz4KPHJlY3QgeD0iMTAwIiB5PSIyMTAiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMxODIyNDAiIHJ4PSIzIi8+Cjxwb2x5Z29uIHBvaW50cz0iMTA4LDE5MyAxMDAsMjEyIDExNiwyMTIiIGZpbGw9IiNjODc4NDAiLz4KPGNpcmNsZSBjeD0iMTA4IiBjeT0iMTkwIiByPSI0IiBmaWxsPSIjZjVjNTE4Ii8+CjxyZWN0IHg9IjI4NCIgeT0iMjEwIiB3aWR0aD0iMTYiIGhlaWdodD0iMjAwIiBmaWxsPSIjMTgyMjQwIiByeD0iMyIvPgo8cG9seWdvbiBwb2ludHM9IjI5MiwxOTMgMjg0LDIxMiAzMDAsMjEyIiBmaWxsPSIjYzg3ODQwIi8+CjxjaXJjbGUgY3g9IjI5MiIgY3k9IjE5MCIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8Y2lyY2xlIGN4PSIxNjUiIGN5PSIzMzUiIHI9IjMiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii43Ii8+CjxjaXJjbGUgY3g9IjIwMCIgY3k9IjMzMyIgcj0iMyIgZmlsbD0iI2Y1YzUxOCIgb3BhY2l0eT0iLjgiLz4KPGNpcmNsZSBjeD0iMjM1IiBjeT0iMzM1IiByPSIzIiBmaWxsPSIjZjVjNTE4IiBvcGFjaXR5PSIuNyIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMzIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRhYjBmMCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjNzhjY2ZmIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNlOGM4NzAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjODc4MzgiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzMykiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU2MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiNiMDkwNzAiLz4KPHJlY3QgeD0iMCIgeT0iMjM1IiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjMzMCIgZmlsbD0iI2MwYjA5MCIvPgo8cmVjdCB4PSIxMDUiIHk9IjE5NSIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIzNzAiIGZpbGw9IiNiMGE4ODAiLz4KPHJlY3QgeD0iMjMwIiB5PSIyMTAiIHdpZHRoPSI5MCIgaGVpZ2h0PSIzNTUiIGZpbGw9IiNjMGIwOTAiLz4KPHJlY3QgeD0iMzI1IiB5PSIxODAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIzODUiIGZpbGw9IiNiMGE4ODAiLz4KPHJlY3QgeD0iMTAiIHk9IjI0OCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjI1IiBmaWxsPSIjZThkODkwIiByeD0iMiIgb3BhY2l0eT0iLjciLz4KPHJlY3QgeD0iMzgiIHk9IjI0OCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjI1IiBmaWxsPSIjZThkODkwIiByeD0iMiIgb3BhY2l0eT0iLjYiLz4KPHJlY3QgeD0iMTE1IiB5PSIyMTIiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2U4ZDg5MCIgcng9IjIiIG9wYWNpdHk9Ii43NSIvPgo8cmVjdCB4PSIxNDgiIHk9IjIxMiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjI4IiBmaWxsPSIjZThkODkwIiByeD0iMiIgb3BhY2l0eT0iLjY1Ii8+CjxyZWN0IHg9IjI0MCIgeT0iMjI1IiB3aWR0aD0iMTgiIGhlaWdodD0iMjUiIGZpbGw9IiNlOGQ4OTAiIHJ4PSIyIiBvcGFjaXR5PSIuNjUiLz4KPHJlY3QgeD0iMzM1IiB5PSIxOTciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2U4ZDg5MCIgcng9IjIiIG9wYWNpdHk9Ii43Ii8+CjxyZWN0IHg9IjE3OCIgeT0iNDMwIiB3aWR0aD0iNDQiIGhlaWdodD0iMTM1IiBmaWxsPSIjYzhiODkwIi8+CjxyZWN0IHg9Ijk1IiB5PSI0NjUiIHdpZHRoPSI2IiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2EwOTA3MCIvPgo8Y2lyY2xlIGN4PSI5OCIgY3k9IjQ2MSIgcj0iOSIgZmlsbD0iI2ZmZjhkMCIgb3BhY2l0eT0iLjkiLz48L3N2Zz4=", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM0IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzM4OThlOCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjNjhiOGY4Ii8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiM5MGQ4ZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjMGU4ZjgiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzNCkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxwYXRoIGQ9Ik0wIDQ2MCBRODAgNDAwIDE2MCA0MjAgUTIyMCAzOTUgMjgwIDQxNSBRMzQwIDM5NSA0MDAgNDEwIEw0MDAgNzAwIEwwIDcwMFoiIGZpbGw9IiM3MGE4NDgiIG9wYWNpdHk9Ii43Ii8+CjxyZWN0IHg9IjAiIHk9IjU0MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMzODk4YzgiLz4KPHJlY3QgeD0iNTIiIHk9IjI5NSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE3NSIgZmlsbD0iI2Q0Yzg5OCIgcng9IjQiLz4KPHBvbHlnb24gcG9pbnRzPSI2MywyNTggNTMsMjgwIDczLDI4MCIgZmlsbD0iI2M4Nzg0MCIvPgo8Y2lyY2xlIGN4PSI2MyIgY3k9IjI1NSIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8ZWxsaXBzZSBjeD0iMjkwIiBjeT0iMzQ1IiByeD0iNTUiIHJ5PSI0OCIgZmlsbD0iI2NjYzg5OCIgb3BhY2l0eT0iLjciLz4KPHJlY3QgeD0iMjU1IiB5PSIyNTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxNDUiIGZpbGw9IiNkMGM4YTAiIHJ4PSIzIiBvcGFjaXR5PSIuNyIvPgo8cG9seWdvbiBwb2ludHM9IjI2MSwyMzUgMjU1LDI1MiAyNjcsMjUyIiBmaWxsPSIjYzg3ODQwIiBvcGFjaXR5PSIuNyIvPgo8cGF0aCBkPSJNMCA1NTIgUTEwMCA1NDQgMjAwIDU1MiBRMzAwIDU2MCA0MDAgNTUyIiBmaWxsPSJub25lIiBzdHJva2U9IiM2OGI4ZTAiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiLz48L3N2Zz4=", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM1IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVhYjhmMCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjODhkMGZmIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNmMGQ4ODgiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkODkwNDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzNSkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU1NSIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDUiIGZpbGw9IiNiODg4NTAiLz4KPGVsbGlwc2UgY3g9IjMxMCIgY3k9IjQ5MCIgcng9IjMwIiByeT0iOSIgZmlsbD0iI2M4OTg1OCIvPgo8cmVjdCB4PSIyOTciIHk9IjQwNSIgd2lkdGg9IjI2IiBoZWlnaHQ9Ijg4IiBmaWxsPSIjZDRhODYwIiByeD0iNCIvPgo8cG9seWdvbiBwb2ludHM9IjMxMCwzODUgMjk3LDQwMyAzMjMsNDAzIiBmaWxsPSIjYzg3ODQwIi8+CjxjaXJjbGUgY3g9IjMxMCIgY3k9IjM4MiIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8cmVjdCB4PSIwIiB5PSIzOTAiIHdpZHRoPSIyNjAiIGhlaWdodD0iMTcwIiBmaWxsPSIjYzA5ODU4Ii8+CjxyZWN0IHg9IjgiIHk9IjM2NSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2I4ODg0OCIvPgo8cmVjdCB4PSI1MiIgeT0iMzc1IiB3aWR0aD0iNDIiIGhlaWdodD0iMTkwIiBmaWxsPSIjYzA5ODU4Ii8+CjxlbGxpcHNlIGN4PSI5NSIgY3k9IjM2MiIgcng9IjQ4IiByeT0iNDAiIGZpbGw9IiNkMGI4ODAiLz4KPHJlY3QgeD0iNzIiIHk9IjI3OCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyNCIgZmlsbD0iI2Q0YmM4OCIgcng9IjMiLz4KPHBvbHlnb24gcG9pbnRzPSI3OCwyNjMgNzIsMjgwIDg0LDI4MCIgZmlsbD0iI2M4Nzg0MCIvPgo8Y2lyY2xlIGN4PSI3OCIgY3k9IjI2MCIgcj0iNCIgZmlsbD0iI2Y1YzUxOCIvPgo8cmVjdCB4PSIwIiB5PSI1NDgiIHdpZHRoPSI0MDAiIGhlaWdodD0iMTAiIGZpbGw9IiNhODc4MzgiIG9wYWNpdHk9Ii44Ii8+CjxyZWN0IHg9IjYwIiB5PSI0OTAiIHdpZHRoPSI2IiBoZWlnaHQ9IjYyIiBmaWxsPSIjYTA3ODI4Ii8+CjxjaXJjbGUgY3g9IjYzIiBjeT0iNDg3IiByPSI4IiBmaWxsPSIjZmZmOGMwIiBvcGFjaXR5PSIuOSIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM2IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY4YzBmOCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjOThkOGZmIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNmOGQ4NzAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlODkwMzAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzNikiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjU1OCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDIiIGZpbGw9IiMzODg4YzAiLz4KPHJlY3QgeD0iMTAiIHk9IjM3MCIgd2lkdGg9IjIyMCIgaGVpZ2h0PSIxOTUiIGZpbGw9IiNlMGQ0YjAiLz4KPHJlY3QgeD0iNSIgeT0iMzYzIiB3aWR0aD0iMjMwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZDBjNGEwIiByeD0iMiIvPgo8cmVjdCB4PSIxOCIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjQwIiB5PSIzNzgiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxODUiIGZpbGw9IiNjY2MwOTgiLz4KPHJlY3QgeD0iNjIiIHk9IjM3OCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjE4NSIgZmlsbD0iI2NjYzA5OCIvPgo8cmVjdCB4PSI4NCIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjEwNiIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjEyOCIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjE1MCIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjE3MiIgeT0iMzc4IiB3aWR0aD0iMTAiIGhlaWdodD0iMTg1IiBmaWxsPSIjY2NjMDk4Ii8+CjxyZWN0IHg9IjE2IiB5PSIzOTUiIHdpZHRoPSIyNiIgaGVpZ2h0PSIzNiIgZmlsbD0iI2U4ZDg5OCIgcng9IjMiLz4KPHJlY3QgeD0iNTIiIHk9IjM5NSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjM2IiBmaWxsPSIjZThkODk4IiByeD0iMyIvPgo8cmVjdCB4PSI4OCIgeT0iMzk1IiB3aWR0aD0iMjYiIGhlaWdodD0iMzYiIGZpbGw9IiNlOGQ4OTgiIHJ4PSIzIi8+CjxyZWN0IHg9IjEyNCIgeT0iMzk1IiB3aWR0aD0iMjYiIGhlaWdodD0iMzYiIGZpbGw9IiNlOGQ4OTgiIHJ4PSIzIi8+CjxyZWN0IHg9IjI0NSIgeT0iMzIwIiB3aWR0aD0iNzAiIGhlaWdodD0iMjQ1IiBmaWxsPSIjYzBiODk4Ii8+CjxyZWN0IHg9IjMyNSIgeT0iMjk1IiB3aWR0aD0iODAiIGhlaWdodD0iMjcwIiBmaWxsPSIjYzhjMGEwIi8+CjxwYXRoIGQ9Ik0wIDU3MiBRMTAwIDU2NCAyMDAgNTcyIFEzMDAgNTgwIDQwMCA1NzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzcwYzBlOCIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIuNSIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM3IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2M4OTAzMCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjZTBiMDUwIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNmOGQ4NzAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkMDk4MjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzNykiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNzAwIiBmaWxsPSIjYzA5MDIwIi8+CjxwYXRoIGQ9Ik0wIDAgUTIwMCAxNjAgNDAwIDAiIGZpbGw9IiNhMDcwMTAiIG9wYWNpdHk9Ii42Ii8+CjxjaXJjbGUgY3g9IjIwMCIgY3k9IjE0MCIgcj0iMjgiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii4zIi8+CjxjaXJjbGUgY3g9IjIwMCIgY3k9IjE0MCIgcj0iMTUiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii42Ii8+CjxjaXJjbGUgY3g9IjIwMCIgY3k9IjE0MCIgcj0iNyIgZmlsbD0iI2ZmZjhhMCIvPgo8bGluZSB4MT0iMjAwIiB5MT0iMCIgeDI9IjIwMCIgeTI9IjEyOCIgc3Ryb2tlPSIjYzg5MDMwIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9Ii42Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjE2MiIgcj0iMTEiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii41Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjE2MiIgcj0iNSIgZmlsbD0iI2ZmZjhhMCIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSIxNjIiIHI9IjExIiBmaWxsPSIjZjVjNTE4IiBvcGFjaXR5PSIuNSIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSIxNjIiIHI9IjUiIGZpbGw9IiNmZmY4YTAiLz4KPHBhdGggZD0iTTIwMCAxNDggTDEzMCA3MDAgTDI3MCA3MDBaIiBmaWxsPSIjZjVjNTE4IiBvcGFjaXR5PSIuMDciLz4KPHBhdGggZD0iTTAgNzAwIEwxNDggMjQwIEwyNTIgMjQwIEw0MDAgNzAwWiIgZmlsbD0iI2IwNzgxOCIvPgo8bGluZSB4MT0iMTQ4IiB5MT0iMjQwIiB4Mj0iMTQ4IiB5Mj0iNzAwIiBzdHJva2U9IiM5MDcwMTAiIHN0cm9rZS13aWR0aD0iMyIvPgo8bGluZSB4MT0iMjUyIiB5MT0iMjQwIiB4Mj0iMjUyIiB5Mj0iNzAwIiBzdHJva2U9IiM5MDcwMTAiIHN0cm9rZS13aWR0aD0iMyIvPgo8cmVjdCB4PSIwIiB5PSIyNDAiIHdpZHRoPSIxNDYiIGhlaWdodD0iNDYwIiBmaWxsPSIjOTg3MDEwIi8+CjxyZWN0IHg9IjgiIHk9IjI1OCIgd2lkdGg9IjU4IiBoZWlnaHQ9Ijg4IiBmaWxsPSIjYTg4MDIwIiByeD0iNCIvPgo8cmVjdCB4PSI3OCIgeT0iMjU4IiB3aWR0aD0iNTgiIGhlaWdodD0iODgiIGZpbGw9IiNhODgwMjAiIHJ4PSI0Ii8+CjxyZWN0IHg9IjE0IiB5PSIyNjgiIHdpZHRoPSI0NiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2U4YzA0MCIgcng9IjIiLz4KPHJlY3QgeD0iODQiIHk9IjI2OCIgd2lkdGg9IjQ2IiBoZWlnaHQ9IjIyIiBmaWxsPSIjYzA0ODIwIiByeD0iMiIvPgo8cmVjdCB4PSIyNTQiIHk9IjI0MCIgd2lkdGg9IjE0NiIgaGVpZ2h0PSI0NjAiIGZpbGw9IiM5ODcwMTAiLz4KPHJlY3QgeD0iMjYyIiB5PSIyNTgiIHdpZHRoPSI1OCIgaGVpZ2h0PSI4OCIgZmlsbD0iI2E4ODAyMCIgcng9IjQiLz4KPHJlY3QgeD0iMzMyIiB5PSIyNTgiIHdpZHRoPSI1OCIgaGVpZ2h0PSI4OCIgZmlsbD0iI2E4ODAyMCIgcng9IjQiLz4KPHJlY3QgeD0iMjY4IiB5PSIyNjgiIHdpZHRoPSI0NiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2EwMzg4OCIgcng9IjIiLz4KPHJlY3QgeD0iMzM4IiB5PSIyNjgiIHdpZHRoPSI0NiIgaGVpZ2h0PSIyMiIgZmlsbD0iI2U4YzA0MCIgcng9IjIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSIyNTYiIHI9IjYiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii45Ii8+CjxjaXJjbGUgY3g9IjI2NCIgY3k9IjI1NiIgcj0iNiIgZmlsbD0iI2Y1YzUxOCIgb3BhY2l0eT0iLjkiLz48L3N2Zz4=", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM4IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzQwOThkOCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjNmFiOGYwIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNhMGQ4ZmYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkMGVlZmYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzOCkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxwYXRoIGQ9Ik0wIDQ0NSBRODAgMzY1IDIwMCAzOTUgUTI5NSA0MjIgNDAwIDM3NSBMNDAwIDcwMCBMMCA3MDBaIiBmaWxsPSIjNWE5MDM4Ii8+CjxyZWN0IHg9IjAiIHk9IjU1NSIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNDUiIGZpbGw9IiMzODg4YzAiLz4KPHJlY3QgeD0iMTYwIiB5PSIyMDUiIHdpZHRoPSI4MCIgaGVpZ2h0PSIyNjAiIGZpbGw9IiNjOGI4NzgiIHJ4PSI2Ii8+CjxyZWN0IHg9IjE1NCIgeT0iMjAwIiB3aWR0aD0iOTIiIGhlaWdodD0iMTIiIGZpbGw9IiNiOGE4NjgiIHJ4PSIzIi8+CjxyZWN0IHg9IjE1OCIgeT0iMTkwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTQiIGZpbGw9IiNjOGI4NzgiLz4KPHJlY3QgeD0iMTc4IiB5PSIxOTAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxNCIgZmlsbD0iI2M4Yjg3OCIvPgo8cmVjdCB4PSIxOTgiIHk9IjE5MCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjE0IiBmaWxsPSIjYzhiODc4Ii8+CjxyZWN0IHg9IjIxOCIgeT0iMTkwIiB3aWR0aD0iMTIiIGhlaWdodD0iMTQiIGZpbGw9IiNjOGI4NzgiLz4KPHJlY3QgeD0iMTc0IiB5PSIyMjUiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNCIgZmlsbD0iI2U4ZDg5OCIgcng9IjMiLz4KPHJlY3QgeD0iMjEwIiB5PSIyMjUiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNCIgZmlsbD0iI2U4ZDg5OCIgcng9IjMiLz4KPHJlY3QgeD0iMTc0IiB5PSIyNjgiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNCIgZmlsbD0iI2U4ZDg5OCIgcng9IjMiLz4KPHJlY3QgeD0iMjEwIiB5PSIyNjgiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNCIgZmlsbD0iI2U4ZDg5OCIgcng9IjMiLz4KPHBhdGggZD0iTTkyIDQ3MCBMMTYwIDI3MCBMMTYwIDQ3MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYjhhODU4IiBzdHJva2Utd2lkdGg9IjEwIi8+CjxwYXRoIGQ9Ik0yNDAgMjcwIEwyNDAgNDcwIEwzMDggNDcwIiBmaWxsPSJub25lIiBzdHJva2U9IiNiOGE4NTgiIHN0cm9rZS13aWR0aD0iMTAiLz4KPHBhdGggZD0iTTAgNTYyIFExMDAgNTU0IDIwMCA1NjIgUTMwMCA1NzAgNDAwIDU2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjBiMGQ4IiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9Ii41Ii8+PC9zdmc+", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InM5IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzBhMTg0OCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjMTAzMGEwIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiMzMDYwZDAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxODQ4YzAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCNzOSkiLz48ZWxsaXBzZSBjeD0iNzAiIGN5PSIxMDgiIHJ4PSI3NSIgcnk9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNzUiLz48ZWxsaXBzZSBjeD0iMzMwIiBjeT0iODgiIHJ4PSI4MCIgcnk9IjE4IiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuNyIvPjxyZWN0IHg9IjAiIHk9IjE4OCIgd2lkdGg9IjkwIiBoZWlnaHQ9IjUxNyIgZmlsbD0iIzBlMTgzYSIvPgo8cmVjdCB4PSI5NSIgeT0iMTQ4IiB3aWR0aD0iMTE1IiBoZWlnaHQ9IjU1NyIgZmlsbD0iIzBhMTIzMCIvPgo8cmVjdCB4PSIyMTUiIHk9IjE2MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI1NDUiIGZpbGw9IiMwZTE4M2EiLz4KPHJlY3QgeD0iMzIwIiB5PSIxMzAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI1NzUiIGZpbGw9IiMwYTEyMzAiLz4KPHJlY3QgeD0iOCIgeT0iMjAwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjgiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii42NSIgcng9IjIiLz4KPHJlY3QgeD0iMzgiIHk9IjIwMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjI4IiBmaWxsPSIjZThhMDQwIiBvcGFjaXR5PSIuNTUiIHJ4PSIyIi8+CjxyZWN0IHg9IjY1IiB5PSIyMDAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyOCIgZmlsbD0iI2Y1YzUxOCIgb3BhY2l0eT0iLjciIHJ4PSIyIi8+CjxyZWN0IHg9IjEwMyIgeT0iMTY1IiB3aWR0aD0iMjIiIGhlaWdodD0iMzAiIGZpbGw9IiNmNWM1MTgiIG9wYWNpdHk9Ii43IiByeD0iMiIvPgo8cmVjdCB4PSIxMzgiIHk9IjE2NSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiBmaWxsPSIjZThhMDQwIiBvcGFjaXR5PSIuNiIgcng9IjIiLz4KPHJlY3QgeD0iMTczIiB5PSIxNjUiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMCIgZmlsbD0iI2Y1YzUxOCIgb3BhY2l0eT0iLjY1IiByeD0iMiIvPgo8cmVjdCB4PSIyMjIiIHk9IjE3OCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMwIiBmaWxsPSIjZjVjNTE4IiBvcGFjaXR5PSIuNjUiIHJ4PSIyIi8+CjxyZWN0IHg9IjI1OCIgeT0iMTc4IiB3aWR0aD0iMjIiIGhlaWdodD0iMzAiIGZpbGw9IiNlOGEwNDAiIG9wYWNpdHk9Ii42IiByeD0iMiIvPgo8cmVjdCB4PSIzMjgiIHk9IjE0OCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjZjVjNTE4IiBvcGFjaXR5PSIuNyIgcng9IjIiLz4KPHJlY3QgeD0iMzY1IiB5PSIxNDgiIHdpZHRoPSIyMiIgaGVpZ2h0PSIzMiIgZmlsbD0iI2U4YTA0MCIgb3BhY2l0eT0iLjYiIHJ4PSIyIi8+CjxyZWN0IHg9IjUiIHk9IjQ1NSIgd2lkdGg9IjY1IiBoZWlnaHQ9IjIwIiBmaWxsPSIjOGIwODM4IiByeD0iNCIgb3BhY2l0eT0iLjk1Ii8+CjxyZWN0IHg9IjEwMCIgeT0iNDU4IiB3aWR0aD0iNTgiIGhlaWdodD0iMTciIGZpbGw9IiMwODM4OGIiIHJ4PSI0IiBvcGFjaXR5PSIuOTUiLz4KPHJlY3QgeD0iMjIwIiB5PSI0NTUiIHdpZHRoPSI2NSIgaGVpZ2h0PSIyMCIgZmlsbD0iIzA4OGIzOCIgcng9IjQiIG9wYWNpdHk9Ii45NSIvPgo8cmVjdCB4PSIzMjUiIHk9IjQ1MiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIyIiBmaWxsPSIjOGIzODA4IiByeD0iNCIgb3BhY2l0eT0iLjk1Ii8+CjxyZWN0IHg9Ijg1IiB5PSI0MTUiIHdpZHRoPSI2IiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzFhMjg0OCIvPgo8Y2lyY2xlIGN4PSI4OCIgY3k9IjQxMSIgcj0iOSIgZmlsbD0iI2ZmZjhjMCIgb3BhY2l0eT0iLjkiLz4KPGNpcmNsZSBjeD0iODgiIGN5PSI0MTEiIHI9IjE4IiBmaWxsPSIjZmZmOGMwIiBvcGFjaXR5PSIuMiIvPjwvc3ZnPg==", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNzAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InMxMCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM1YWI4ZjAiLz48c3RvcCBvZmZzZXQ9IjQwJSIgc3RvcC1jb2xvcj0iIzg4ZDBmZiIvPjxzdG9wIG9mZnNldD0iNzUlIiBzdG9wLWNvbG9yPSIjZjBjMDYwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTg5MDQ4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI3MDAiIGZpbGw9InVybCgjczEwKSIvPjxlbGxpcHNlIGN4PSI3MCIgY3k9IjEwOCIgcng9Ijc1IiByeT0iMjAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii43NSIvPjxlbGxpcHNlIGN4PSIzMzAiIGN5PSI4OCIgcng9IjgwIiByeT0iMTgiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii43Ii8+PHJlY3QgeD0iMCIgeT0iNDY1IiB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIzNSIgZmlsbD0iIzM4OThjOCIvPgo8cGF0aCBkPSJNMCA0NzggUTEwMCA0NzAgMjAwIDQ3OCBRMzAwIDQ4NiA0MDAgNDc4IiBmaWxsPSJub25lIiBzdHJva2U9IiM2OGI4ZTAiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiLz4KPHBhdGggZD0iTTAgNDY1IFE1NSA0MjAgMTE1IDQzMiBRMTU1IDQxOCAxOTUgNDQwIEwxOTUgNDY1WiIgZmlsbD0iIzVhOTAzOCIvPgo8ZWxsaXBzZSBjeD0iNTUiIGN5PSI0MjAiIHJ4PSIyMiIgcnk9IjI2IiBmaWxsPSIjNGE4MDI4Ii8+CjxlbGxpcHNlIGN4PSI5NSIgY3k9IjQxNCIgcng9IjI1IiByeT0iMzAiIGZpbGw9IiM0YTgwMjgiLz4KPHBhdGggZD0iTTIwNSA0NjUgUTI1NSA0MTggMzA1IDQzMCBRMzQ4IDQxNSA0MDAgNDI4IEw0MDAgNDY1WiIgZmlsbD0iIzVhOTAzOCIvPgo8ZWxsaXBzZSBjeD0iMjYwIiBjeT0iNDE4IiByeD0iMjQiIHJ5PSIyOCIgZmlsbD0iIzRhODAyOCIvPgo8ZWxsaXBzZSBjeD0iMzA4IiBjeT0iNDEyIiByeD0iMjYiIHJ5PSIzMiIgZmlsbD0iIzRhODAyOCIvPgo8ZWxsaXBzZSBjeD0iMjAwIiBjeT0iNDc4IiByeD0iMTU1IiByeT0iMjAiIGZpbGw9IiNlOGUwYzgiLz4KPHJlY3QgeD0iNTIiIHk9IjM5MiIgd2lkdGg9IjI5NiIgaGVpZ2h0PSI4OCIgZmlsbD0iI2YwZThkMCIgcng9IjYiLz4KPHJlY3QgeD0iODAiIHk9IjM2MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIzNiIgZmlsbD0iI2U4ZTBjOCIgcng9IjQiLz4KPHJlY3QgeD0iMTM1IiB5PSIzMjQiIHdpZHRoPSIxMzAiIGhlaWdodD0iNDAiIGZpbGw9IiNkOGQwYjAiIHJ4PSI0Ii8+CjxyZWN0IHg9IjE4MyIgeT0iMjc4IiB3aWR0aD0iMjgiIGhlaWdodD0iNTAiIGZpbGw9IiNiODMwMjAiIHJ4PSI0Ii8+CjxyZWN0IHg9IjY0IiB5PSI0MDQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzkwYzhlOCIgcng9IjMiLz4KPHJlY3QgeD0iMTIwIiB5PSI0MDQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzkwYzhlOCIgcng9IjMiLz4KPHJlY3QgeD0iMTc2IiB5PSI0MDQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzkwYzhlOCIgcng9IjMiLz4KPHJlY3QgeD0iMjMyIiB5PSI0MDQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzkwYzhlOCIgcng9IjMiLz4KPHJlY3QgeD0iMjg4IiB5PSI0MDQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzkwYzhlOCIgcng9IjMiLz4KPHBhdGggZD0iTTQ4IDQ5MCBRMTI0IDQ4MiAyMDAgNDkwIFEyNzYgNDk4IDM1MiA0OTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzgwYzhlOCIgc3Ryb2tlLXdpZHRoPSIyLjUiIG9wYWNpdHk9Ii40NSIvPgo8cGF0aCBkPSJNOTUgMzMwIFExMDUgMzIzIDExNSAzMzAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M4ZDhlOCIgc3Ryb2tlLXdpZHRoPSIxLjgiLz4KPHBhdGggZD0iTTI2OCAzMjIgUTI3OCAzMTUgMjg4IDMyMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYzhkOGU4IiBzdHJva2Utd2lkdGg9IjEuOCIvPjwvc3ZnPg=="];
+var TOTAL=LEVELS.length; // 296 level, 356 kelime
+
+// ═══════════════════════════════════════════
+// MÜZİK — Hicaz Makamı (Ney + Ud + Kanun + Def)
+// Gerçek Osmanlı/Türk makam müziği algoritması
+// ═══════════════════════════════════════════
+var AC=null,musicNodes=[],musicOn=true,soundOn=true,vibOn=true;
+// Hicaz makamı — Re hicaz: D Eb F# G A Bb C# D (Hz)
+var HICAZ_LOW  = [146.83, 155.56, 185.00, 196.00, 220.00, 233.08, 277.18, 293.66];
+var HICAZ_MID  = [293.66, 311.13, 369.99, 392.00, 440.00, 466.16, 554.37, 587.33];
+var HICAZ_HIGH = [587.33, 622.25, 739.99, 784.00, 880.00, 932.33, 1108.73, 1174.66];
+
+// Ney — nefesli, hafif titrek, ağlayan ses
+function playNey(ctx, freq, when, dur, vol) {
+  vol = vol || 0.055;
+  var masterGain = ctx.createGain();
+  masterGain.connect(ctx.destination);
+
+  // Ana ton — triangle dalgası (ney için doğal)
+  var osc = ctx.createOscillator();
+  osc.type = "triangle";
+  osc.frequency.value = freq;
+  // Mikrotonal titreme (ney karakteristik)
+  var vibLFO = ctx.createOscillator();
+  vibLFO.frequency.value = 5.2 + Math.random() * 1.5;
+  var vibGain = ctx.createGain();
+  vibGain.gain.value = freq * 0.012;
+  vibLFO.connect(vibGain);
+  vibGain.connect(osc.frequency);
+  vibLFO.start(when);
+  vibLFO.stop(when + dur + 0.1);
+
+  var g = ctx.createGain();
+  g.gain.setValueAtTime(0, when);
+  g.gain.linearRampToValueAtTime(vol, when + 0.12);
+  g.gain.setValueAtTime(vol * 0.85, when + dur * 0.6);
+  g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(when); osc.stop(when + dur + 0.15);
+
+  // 2. harmonik
+  var osc2 = ctx.createOscillator();
+  osc2.type = "sine"; osc2.frequency.value = freq * 2;
+  var g2 = ctx.createGain();
+  g2.gain.setValueAtTime(0, when);
+  g2.gain.linearRampToValueAtTime(vol * 0.28, when + 0.1);
+  g2.gain.exponentialRampToValueAtTime(0.001, when + dur * 0.8);
+  osc2.connect(g2); g2.connect(masterGain);
+  osc2.start(when); osc2.stop(when + dur + 0.1);
+
+  // Nefes gürültüsü — ney'in karakteristik sesi
+  var bufLen = Math.ceil(ctx.sampleRate * dur);
+  var buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for (var i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1) * 0.018;
+  var ns = ctx.createBufferSource();
+  ns.buffer = buf;
+  var bf = ctx.createBiquadFilter();
+  bf.type = "bandpass"; bf.frequency.value = freq * 1.8; bf.Q.value = 3.5;
+  var ng = ctx.createGain();
+  ng.gain.setValueAtTime(0, when);
+  ng.gain.linearRampToValueAtTime(0.032, when + 0.08);
+  ng.gain.setValueAtTime(0.028, when + dur * 0.5);
+  ng.gain.exponentialRampToValueAtTime(0.001, when + dur);
+  ns.connect(bf); bf.connect(ng); ng.connect(masterGain);
+  ns.start(when);
+}
+
+// Ud — telli, parlak atak, uzun çınlama
+function playUd(ctx, freq, when, dur, vol) {
+  vol = vol || 0.08;
+  var masterGain = ctx.createGain();
+  masterGain.connect(ctx.destination);
+
+  // Harmonik zincir — ud için 1,2,3,4,5
+  var harmonics = [[1, vol], [2, vol*0.55], [3, vol*0.22], [4, vol*0.1], [5, vol*0.04]];
+  harmonics.forEach(function(h) {
+    var o = ctx.createOscillator(); o.type = "sine";
+    o.frequency.value = freq * h[0];
+    var g = ctx.createGain();
+    // Ud: keskin atak, uzun çınlama
+    g.gain.setValueAtTime(0, when);
+    g.gain.linearRampToValueAtTime(h[1], when + 0.008);
+    g.gain.exponentialRampToValueAtTime(h[1] * 0.3, when + 0.2);
+    g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+    o.connect(g); g.connect(masterGain);
+    o.start(when); o.stop(when + dur + 0.05);
+  });
+
+  // Mızrap gürültüsü — tel vurma karakteristiği
+  var attackBuf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * 0.04), ctx.sampleRate);
+  var ad = attackBuf.getChannelData(0);
+  for (var i = 0; i < ad.length; i++) ad[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.015));
+  var as = ctx.createBufferSource(); as.buffer = attackBuf;
+  var ag = ctx.createGain(); ag.gain.value = vol * 0.4;
+  as.connect(ag); ag.connect(masterGain);
+  as.start(when);
+}
+
+// Kanun — tel, parlak, yukarı oktav
+function playKanun(ctx, freq, when, dur, vol) {
+  vol = vol || 0.045;
+  var masterGain = ctx.createGain();
+  masterGain.connect(ctx.destination);
+  [[1,vol],[2,vol*0.7],[3,vol*0.35],[4,vol*0.15]].forEach(function(h){
+    var o = ctx.createOscillator(); o.type = "sine";
+    o.frequency.value = freq * h[0];
+    var g = ctx.createGain();
+    g.gain.setValueAtTime(0, when);
+    g.gain.linearRampToValueAtTime(h[1], when + 0.005);
+    g.gain.exponentialRampToValueAtTime(h[1]*0.15, when + 0.15);
+    g.gain.exponentialRampToValueAtTime(0.001, when + dur);
+    o.connect(g); g.connect(masterGain);
+    o.start(when); o.stop(when + dur + 0.05);
+  });
+}
+
+// Def (daire) — ritim, düşük frekans darbe
+function playDef(ctx, when, vol) {
+  vol = vol || 0.06;
+  var masterGain = ctx.createGain();
+  masterGain.connect(ctx.destination);
+  // Derin davul sesi
+  var o = ctx.createOscillator(); o.type = "sine";
+  o.frequency.setValueAtTime(160, when);
+  o.frequency.exponentialRampToValueAtTime(55, when + 0.15);
+  var g = ctx.createGain();
+  g.gain.setValueAtTime(vol, when);
+  g.gain.exponentialRampToValueAtTime(0.001, when + 0.35);
+  o.connect(g); g.connect(masterGain);
+  o.start(when); o.stop(when + 0.4);
+  // Tef zil sesi — yüksek frekanslı
+  var bufLen = Math.ceil(ctx.sampleRate * 0.18);
+  var buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  var data = buf.getChannelData(0);
+  for (var i = 0; i < bufLen; i++) data[i] = (Math.random()*2-1) * Math.exp(-i/(ctx.sampleRate*0.04));
+  var ns = ctx.createBufferSource(); ns.buffer = buf;
+  var hf = ctx.createBiquadFilter(); hf.type = "highpass"; hf.frequency.value = 3500;
+  var ng = ctx.createGain(); ng.gain.value = vol * 0.35;
+  ns.connect(hf); hf.connect(ng); ng.connect(masterGain);
+  ns.start(when);
+}
+
+// ── ANA MÜZİK DÖNGÜSÜ ──
+// Hicaz taksim: özgür melodik gezinti + usul ritim
+var _musicTimer = null;
+var _musicPhase = 0; // 0=giriş 1=taksim 2=semai 3=serbest
+var TEMPO = 2.8; // saniye/bar
+
+function startMusic(){}
+function scheduleMusic(){}
+function stopMusic(){
+  if(_musicTimer){clearTimeout(_musicTimer);_musicTimer=null;}
+  musicNodes.forEach(function(n){try{n.stop();}catch(e){}});
+  musicNodes=[];
+}
+function toggleMusic(on){ musicOn=on; localStorage.setItem("aw_music",on?1:0); }
+function playSound(type) {
+  if (!soundOn) return;
+  // AC yoksa oluştur
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+  }
+  if (AC.state === "suspended") AC.resume();
+  var t = AC.currentTime;
+
+  if (type === "correct") {
+    // Ud ile doğru cevap — iki güzel ton
+    playUd(AC, HICAZ_MID[4], t, 0.5, 0.13);       // La
+    playUd(AC, HICAZ_MID[6], t + 0.12, 0.4, 0.1); // Do#
+    playKanun(AC, HICAZ_HIGH[0], t + 0.05, 0.35, 0.05);
+  }
+  else if (type === "wrong") {
+    // Kısa def + düşük ton
+    var o = AC.createOscillator(); o.type = "sawtooth";
+    o.frequency.value = 165;
+    var g = AC.createGain();
+    g.gain.setValueAtTime(0.065, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t); o.stop(t + 0.25);
+    playDef(AC, t, 0.04);
+  }
+  else if (type === "done") {
+    // Zafer melodisi — Hicaz makamında yükselen frase
+    var melody = [0, 2, 4, 5, 6, 5, 7];
+    melody.forEach(function(ni, i) {
+      var delay = i * 0.115;
+      playUd(AC, HICAZ_MID[ni % 8], t + delay, 0.6, 0.1);
+      playNey(AC, HICAZ_MID[ni % 8], t + delay + 0.03, 0.5, 0.055);
+      if (i < 3) playDef(AC, t + delay, 0.04);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════
+// DURUM
+// ═══════════════════════════════════════════
+var currentLevel=1,gems=0,hints=20,progress={},currentUser=null;
+
+function saveState(){
+  localStorage.setItem("aw_gems",gems);
+  localStorage.setItem("aw_hints",hints);
+  localStorage.setItem("aw_level",currentLevel);
+  localStorage.setItem("aw_progress",JSON.stringify(progress));
+  localStorage.setItem("aw_sound",soundOn?1:0);
+  localStorage.setItem("aw_vib",vibOn?1:0);
+}
+function loadState(){
+  gems=parseInt(localStorage.getItem("aw_gems")||100);
+  hints=parseInt(localStorage.getItem("aw_hints")||20);
+  currentLevel=parseInt(localStorage.getItem("aw_level")||1);
+  soundOn=localStorage.getItem("aw_sound")!=="0";
+  vibOn=localStorage.getItem("aw_vib")!=="0";
+  musicOn=localStorage.getItem("aw_music")!=="0";
+  try{progress=JSON.parse(localStorage.getItem("aw_progress")||"{}");}catch(e){progress={};}
+}
+function saveUser(u){localStorage.setItem("aw_user",JSON.stringify(u));}
+function loadUser(){try{return JSON.parse(localStorage.getItem("aw_user"));}catch(e){return null;}}
+function clearUser(){localStorage.removeItem("aw_user");}
+
+function $(id){return document.getElementById(id);}
+function showScreen(id){document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});$(id).classList.add("active");}
+function updateGemUI(){$("gems-h").textContent=gems;$("gems-g").textContent=gems;}
+function updateHintUI(){
+  $("hints-h").textContent=hints;
+  $("hint-count-btn").textContent=hints;
+}
+function toast(msg,ms){var t=$("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("on");},ms||1900);}
+function vibrate(ms){if(vibOn&&navigator.vibrate)navigator.vibrate(ms||40);}
+function setBg(el,lv){
+  var url=BG[(lv-1)%BG.length];
+  el.style.backgroundImage="url("+url+")";
+  el.style.backgroundSize="cover";
+  el.style.backgroundPosition="center";
+}
+function preload(lv){
+  for(var i=0;i<=3;i++){
+    var img=new Image();
+    img.src=BG[(lv+i-1)%BG.length];
+  }
+}
+
+// ═══════════════════════════════════════════
+// SPLASH
+// ═══════════════════════════════════════════
+(function(){
+  loadState();
+  var sc=$("spl-stars");
+  for(var i=0;i<65;i++){
+    var s=document.createElement("div");s.className="ss";
+    var sz=Math.random()*2.2+0.6;
+    s.style.cssText="width:"+sz+"px;height:"+sz+"px;top:"+(Math.random()*100)+"%;left:"+(Math.random()*100)+"%;--d:"+(2+Math.random()*3.5)+"s;--dl:"+(Math.random()*3)+"s";
+    sc.appendChild(s);
+  }
+  var fill=$("spl-fill"),p=0;
+  preload(currentLevel);
+  var iv=setInterval(function(){
+    p+=2;fill.style.width=p+"%";
+    if(p>=100){
+      clearInterval(iv);
+      setTimeout(function(){
+        showScreen("home");initHome();checkDailyReward();checkKVKK();
+        
+      },280);
+    }
+  },25);
+})();
+
+// ═══════════════════════════════════════════
+// KVKK
+// ═══════════════════════════════════════════
+function checkKVKK(){if(!localStorage.getItem("aw_kvkk"))$("kvkk-ov").classList.add("show");}
+$("kvkk-accept-btn").addEventListener("click",function(){localStorage.setItem("aw_kvkk","1");$("kvkk-ov").classList.remove("show");configureAdMob($("kc-r").checked);});
+$("kvkk-reject-btn").addEventListener("click",function(){localStorage.setItem("aw_kvkk","1");$("kvkk-ov").classList.remove("show");configureAdMob(false);});
+
+// ═══════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════
+function initHome(){
+  setBg($("hbg"),currentLevel);
+  $("glv").textContent=currentLevel;
+  updateGemUI();updateHintUI();buildLevelGrid();
+  $("stg-sound").classList.toggle("on",soundOn);
+  $("stg-vib").classList.toggle("on",vibOn);
+  
+}
+$("bstart").addEventListener("click",function(){vibrate();startLevel(currentLevel);});
+$("bglobe").addEventListener("click",function(){vibrate();$("lvl-cont").classList.add("on");});
+$("bsettings").addEventListener("click",function(){$("settings-modal").classList.add("on");});
+
+function getLvlState(i){
+  if(progress[i]==="done")return "done";
+  if(i===currentLevel)return "current";
+  if(i<currentLevel)return "open";
+  return "locked";
+}
+function buildLevelGrid(){
+  var g=$("lvl-grid");g.innerHTML="";
+  for(var i=1;i<=TOTAL;i++){
+    var btn=document.createElement("button");
+    btn.className="lvl-btn "+getLvlState(i);
+    btn.innerHTML=i+(progress[i]==="done"?"<span class='lvl-star'>⭐</span>":"");
+    if(getLvlState(i)!=="locked"){
+      (function(lv){btn.addEventListener("click",function(){vibrate();$("lvl-cont").classList.remove("on");startLevel(lv);});})(i);
+    }
+    g.appendChild(btn);
+  }
+}
+$("lvl-close").addEventListener("click",function(){$("lvl-cont").classList.remove("on");});
+
+// ═══════════════════════════════════════════
+// GÜNLÜK ÇARK
+// ═══════════════════════════════════════════
+var SPIN_SEGMENTS = [
+  {label:"5 💡",   color:"#3b82f6", type:"hints", val:5},
+  {label:"10 💡",  color:"#8b5cf6", type:"hints", val:10},
+  {label:"20 💡",  color:"#06b6d4", type:"hints", val:20},
+  {label:"5 💎",   color:"#f59e0b", type:"gems",  val:5},
+  {label:"10 💎",  color:"#22c55e", type:"gems",  val:10},
+];
+var SPIN_N = SPIN_SEGMENTS.length;
+var spinAngle = 0;
+var spinRunning = false;
+
+function drawSpinWheel(angle) {
+  var canvas = $("spin-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W = 280, R = 130, cx = 140, cy = 140;
+  ctx.clearRect(0, 0, W, W);
+  var sliceAngle = (2 * Math.PI) / SPIN_N;
+  SPIN_SEGMENTS.forEach(function(seg, i) {
+    var start = angle + i * sliceAngle - Math.PI / 2;
+    var end   = start + sliceAngle;
+    // Dilim
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, start, end);
+    ctx.closePath();
+    ctx.fillStyle = seg.color;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.35)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Yazı
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + sliceAngle / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 18px Arial";
+    ctx.shadowColor = "rgba(0,0,0,.4)";
+    ctx.shadowBlur = 4;
+    ctx.fillText(seg.label, R - 14, 6);
+    ctx.restore();
+  });
+  // Dış çember
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+  ctx.strokeStyle = "rgba(255,255,255,.25)";
+  ctx.lineWidth = 5;
+  ctx.stroke();
+}
+
+function spinWheel() {
+  if (spinRunning) return;
+  spinRunning = true;
+  $("spin-btn").disabled = true;
+  $("spin-btn").textContent = "Dönüyor...";
+
+  // Kazanacak dilimi önceden seç (ağırlıklı random)
+  var winIdx = Math.floor(Math.random() * SPIN_N);
+  var sliceAngle = (2 * Math.PI) / SPIN_N;
+  // Pointer yukarıda (−π/2), kazanan dilim oraya gelsin
+  var targetAngle = -(winIdx * sliceAngle) - sliceAngle / 2;
+  // Birkaç tam tur + hedef
+  var extraTurns = (5 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+  var finalAngle = targetAngle + extraTurns;
+
+  var startAngle = spinAngle;
+  var duration = 3800 + Math.random() * 800;
+  var startTime = null;
+
+  function easeOut(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  function animate(ts) {
+    if (!startTime) startTime = ts;
+    var elapsed = ts - startTime;
+    var progress = Math.min(elapsed / duration, 1);
+    spinAngle = startAngle + (finalAngle - startAngle) * easeOut(progress);
+    drawSpinWheel(spinAngle);
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      spinAngle = finalAngle % (2 * Math.PI);
+      spinRunning = false;
+      giveSpinReward(winIdx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function giveSpinReward(idx) {
+  var seg = SPIN_SEGMENTS[idx];
+  if (seg.type === "hints") {
+    hints += seg.val;
+    updateHintUI();
+  } else {
+    gems += seg.val;
+    updateGemUI();
+  }
+  saveState();
+  playSound("done");
+  var res = $("spin-result");
+  res.textContent = "🎉 " + seg.label + " kazandın!";
+  res.classList.add("show");
+  setTimeout(function() {
+    res.classList.remove("show");
+    setTimeout(function() {
+      $("ov-spin").classList.remove("on");
+      $("spin-btn").disabled = false;
+      $("spin-btn").textContent = "ÇEVİR!";
+      toast("🎁 " + seg.label + " kazandın!");
+    }, 400);
+  }, 2200);
+}
+
+function checkDailyReward() {
+  var today = new Date().toDateString();
+  if (localStorage.getItem("aw_daily") !== today) {
+    setTimeout(function() {
+      drawSpinWheel(0);
+      $("ov-spin").classList.add("on");
+    }, 1000);
+  }
+}
+
+$("spin-btn").addEventListener("click", function() {
+  spinWheel();
+  localStorage.setItem("aw_daily", new Date().toDateString());
+});
+$("spin-skip").addEventListener("click", function() {
+  localStorage.setItem("aw_daily", new Date().toDateString());
+  $("ov-spin").classList.remove("on");
+});
+
+// ═══════════════════════════════════════════
+// OYUN DEĞİŞKENLERİ
+// ═══════════════════════════════════════════
+var levelWords=[],foundWords=[],currentWord="",dragging=false;
+var currentPlacements=[];
+
+function startLevel(lv){
+  currentLevel=lv;
+  levelWords=LEVELS[lv-1]||[];
+  foundWords=[];currentWord="";
+  saveState();
+  $("ltag").textContent="SEVİYE "+lv;
+  setBg($("gbg"),lv);preload(lv);
+  updateGemUI();updateHintUI();
+  showScreen("game");
+  // ÖNEMLİ: buildGrid ve buildWheel, ekran görünür olduktan sonra çalışmalı
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      buildGrid();
+      buildWheel();
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// IZGARA — alt alta
+// ═══════════════════════════════════════════
+function buildGrid(){
+  var grid=$("cw-grid");grid.innerHTML="";
+  var CELL=44,GAP=5;
+  currentPlacements=levelWords.map(function(w,i){return{word:w,row:i,col:0};});
+  var maxLen=Math.max.apply(null,levelWords.map(function(w){return w.length;}));
+  grid.style.width=maxLen*(CELL+GAP)-GAP+"px";
+  grid.style.height=levelWords.length*(CELL+GAP)-GAP+"px";
+  currentPlacements.forEach(function(p,wi){
+    for(var li=0;li<p.word.length;li++){
+      var div=document.createElement("div");
+      div.className="cc b";
+      div.dataset.wi=wi;div.dataset.li=li;
+      div.style.left=(li*(CELL+GAP))+"px";
+      div.style.top=(wi*(CELL+GAP))+"px";
+      div.style.width=CELL+"px";div.style.height=CELL+"px";
+      div.style.fontSize="1.25rem";
+      grid.appendChild(div);
+    }
+  });
+  setTimeout(scaleGrid,60);
+}
+function scaleGrid(){
+  var area=document.querySelector(".cw-area"),grid=$("cw-grid");
+  if(!area||!grid)return;
+  var aw=area.clientWidth-20,ah=area.clientHeight-8;
+  var gw=grid.offsetWidth,gh=grid.offsetHeight;
+  if(!gw||!gh)return;
+  var sc=Math.min(aw/gw,ah/gh,1.12);
+  grid.style.transform="scale("+sc+")";
+  grid.style.transformOrigin="center center";
+}
+
+// ═══════════════════════════════════════════
+// KELİME KONTROL
+// ═══════════════════════════════════════════
+function checkWord(word){
+  if(!word||word.length<2)return;
+  if(foundWords.includes(word)){toast("⚠️ Zaten bulundu!");return;}
+  if(levelWords.includes(word)){
+    foundWords.push(word);
+    var reward=word.length*10;
+    gems+=reward;updateGemUI();saveState();
+    vibrate(65);playSound("correct");
+    revealWord(word);
+    showDef(word,reward);
+    checkDone();
+  } else {
+    playSound("wrong");toast("❌ "+word);
+  }
+}
+
+function revealWord(word){
+  var wi=currentPlacements.findIndex(function(p){return p.word===word;});
+  if(wi<0)return;
+  document.querySelectorAll("#cw-grid .cc[data-wi='"+wi+"']").forEach(function(cell){
+    var li=parseInt(cell.dataset.li);
+    cell.classList.remove("b","hf");
+    cell.classList.add("f");
+    cell.textContent=word[li];
+  });
+}
+
+// ═══════════════════════════════════════════
+// İPUCU
+// ═══════════════════════════════════════════
+function useHint(){
+  var remaining=levelWords.filter(function(w){return !foundWords.includes(w);});
+  if(!remaining.length){toast("Tüm kelimeler bulundu!");return;}
+  var word=remaining[0];
+  var wi=currentPlacements.findIndex(function(p){return p.word===word;});
+  if(wi<0)return;
+  var cells=document.querySelectorAll("#cw-grid .cc[data-wi='"+wi+"']");
+  var opened=false;
+  cells.forEach(function(cell){
+    if(!opened&&cell.classList.contains("b")){
+      hints--;updateHintUI();saveState();
+      var li=parseInt(cell.dataset.li);
+      cell.classList.remove("b","f");
+      cell.classList.add("hf");
+      cell.textContent=word[li];
+      toast("💡 "+word[li]+" harfi açıldı");
+      opened=true;
+    }
+  });
+  if(!opened){
+    if(!foundWords.includes(word)){
+      foundWords.push(word);
+      var reward=word.length*10;
+      gems+=reward;updateGemUI();saveState();
+      playSound("correct");
+      cells.forEach(function(cell){cell.classList.remove("hf","b");cell.classList.add("f");});
+      showDef(word,reward);checkDone();
+    }
+  } else {
+    var allOpen=true;
+    cells.forEach(function(cell){if(cell.classList.contains("b"))allOpen=false;});
+    if(allOpen&&!foundWords.includes(word)){
+      foundWords.push(word);
+      var r2=word.length*10;
+      gems+=r2;updateGemUI();saveState();
+      playSound("correct");
+      cells.forEach(function(cell){cell.classList.remove("hf","b");cell.classList.add("f");});
+      showDef(word,r2);checkDone();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// LEVEL TAMAMLANDI
+// ═══════════════════════════════════════════
+function checkDone(){
+  if(foundWords.length<levelWords.length)return;
+  progress[currentLevel]="done";
+  // Her 10 levelda +5 elmas bonusu
+  if(currentLevel % 10 === 0){
+    gems += 5;
+    updateGemUI();
+    saveState();
+    setTimeout(function(){ toast("🏆 "+currentLevel+". level bonusu: +5 💎"); }, 600);
+  }
+  if(currentLevel<TOTAL)currentLevel++;
+  saveState();playSound("done");
+  $("done-txt").textContent="Tüm kelimeler bulundu! 🎉";
+  $("ov-done").classList.add("on");
+  showInterstitialIfNeeded();
+}
+$("bnext").addEventListener("click",function(){$("ov-done").classList.remove("on");startLevel(currentLevel);});
+
+// ═══════════════════════════════════════════
+// DEF SHEET
+// ═══════════════════════════════════════════
+function showDef(word,reward){
+  var info=DB[word];if(!info)return;
+  $("def-word").textContent=word;
+  $("def-meaning").textContent=info[0]||"";
+  $("def-example").textContent=info[1]||"";
+  $("def-gems-txt").textContent="+"+(reward||0)+" 💎 kazandın!";
+  $("def-sheet").classList.add("on");$("def-backdrop").classList.add("on");
+}
+function closeDef(){$("def-sheet").classList.remove("on");$("def-backdrop").classList.remove("on");}
+$("def-close").addEventListener("click",closeDef);
+$("def-backdrop").addEventListener("click",closeDef);
+
+// ═══════════════════════════════════════════
+// BUTONLAR
+// ═══════════════════════════════════════════
+$("bback").addEventListener("click",function(){vibrate();showScreen("home");initHome();});
+$("bsh").addEventListener("click",function(){vibrate();buildWheel();toast("🔀 Karıştırıldı");});
+$("bhi").addEventListener("click",function(){vibrate();if(hints<=0){$("ov-buy-hint").classList.add("on");return;}useHint();});
+$("bbuy-hint").addEventListener("click",function(){
+  if(gems>=5){gems-=5;hints+=5;updateGemUI();updateHintUI();saveState();$("ov-buy-hint").classList.remove("on");toast("✅ 5 ipucu eklendi!");}
+  else toast("❌ Yeterli elmas yok!");
+});
+$("bbuy-ad").addEventListener("click",function(){$("ov-buy-hint").classList.remove("on");showRewardedAd(function(){hints+=5;updateHintUI();saveState();toast("✅ +5 💡 ipucu!");});});
+$("bbuy-cancel").addEventListener("click",function(){$("ov-buy-hint").classList.remove("on");});
+$("brw-cancel").addEventListener("click",function(){$("ov-rw").classList.remove("on");});
+$("brw").addEventListener("click",function(){$("ov-rw").classList.remove("on");showRewardedAd(function(){hints+=5;updateHintUI();saveState();toast("✅ +5 💡 ipucu!");});});
+
+// ═══════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════
+$("settings-close").addEventListener("click",function(){$("settings-modal").classList.remove("on");});
+$("stg-sound").addEventListener("click",function(){soundOn=!soundOn;this.classList.toggle("on",soundOn);saveState();});
+$("stg-vib").addEventListener("click",function(){vibOn=!vibOn;this.classList.toggle("on",vibOn);saveState();});
+// müzik kaldırıldı
+$("btn-reset").addEventListener("click",function(){$("confirm-reset").classList.add("on");});
+$("reset-cancel").addEventListener("click",function(){$("confirm-reset").classList.remove("on");});
+$("reset-confirm").addEventListener("click",function(){localStorage.clear();location.reload();});
+// Google login devre dışı
+// Facebook login devre dışı
+$("btn-logout").addEventListener("click",function(){currentUser=null;clearUser();updateAuthUI();toast("👋 Çıkış yapıldı.");});
+function doLogin(u){currentUser=u;saveUser(u);updateAuthUI();$("settings-modal").classList.remove("on");toast("👋 Hoş geldin, "+u.name.split(" ")[0]+"!");}
+function updateAuthUI(){
+  if(currentUser){$("auth-logged-out").style.display="none";$("auth-logged-in").style.display="block";$("auth-name").textContent=currentUser.name;$("auth-email").textContent=currentUser.email;}
+  else{$("auth-logged-out").style.display="block";$("auth-logged-in").style.display="none";}
+}
+currentUser=loadUser();updateAuthUI();
+
+// ═══════════════════════════════════════════
+// ÇARK — FIX: area.offsetWidth 0 sorunu çözüldü
+// ═══════════════════════════════════════════
+var charEls=[],_wl=null;
+function shuffle(a){var b=[...a];for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function buildWheel(){
+  var area=$("wheel-area"),inner=$("wheel-inner"),canvas=$("line-canvas");
+  if(_wl){
+    area.removeEventListener("touchstart",_wl.s,{passive:false});
+    area.removeEventListener("touchmove",_wl.m,{passive:false});
+    area.removeEventListener("touchend",_wl.e,{passive:false});
+    area.removeEventListener("mousedown",_wl.s);
+    document.removeEventListener("mousemove",_wl.dm);
+    document.removeEventListener("mouseup",_wl.de);
+    _wl=null;
+  }
+  inner.innerHTML="";charEls=[];
+
+  var lc={},pool=[];
+  levelWords.forEach(function(w){w.split("").forEach(function(l){lc[l]=(lc[l]||0)+1;if(lc[l]<=2)pool.push(l);});});
+  pool=shuffle(pool);
+
+  // FIX: offsetWidth 0 gelirse window.innerWidth kullan
+  var W=area.offsetWidth;
+  if(!W||W<50) W=window.innerWidth;
+  var H=Math.min(Math.round(W*0.50),205);
+  area.style.height=H+"px";
+
+  canvas.width=W;canvas.height=H;
+  canvas.style.cssText="position:absolute;top:0;left:0;width:"+W+"px;height:"+H+"px;pointer-events:none;z-index:2;";
+  var ctx=canvas.getContext("2d");
+
+  var n=pool.length;
+  if(n===0){return;} // pool boşsa çıkma engeli
+  var R=Math.min(W/2-52,H/2-20);
+  if(R<20)R=20;
+  var cx=W/2,cy=H/2;
+  var sz=Math.max(32,Math.min(48,Math.floor(2*Math.PI*R/n*0.62)));
+
+  pool.forEach(function(letter,i){
+    var ang=(2*Math.PI*i/n)-Math.PI/2;
+    var lx=cx+R*Math.cos(ang)-sz/2,ly=cy+R*Math.sin(ang)-sz/2;
+    var el=document.createElement("div");el.className="char";el.textContent=letter;
+    el.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+lx+"px;top:"+ly+"px;font-size:"+(sz*.44)+"px;";
+    inner.appendChild(el);
+    charEls.push({el:el,ax:lx+sz/2,ay:ly+sz/2,letter:letter});
+  });
+
+  var sel=[],hitR=sz*0.9;
+  function getPos(e){
+    var r=area.getBoundingClientRect();
+    var src=e.touches?e.touches[0]:(e.changedTouches?e.changedTouches[0]:e);
+    return{x:src.clientX-r.left,y:src.clientY-r.top};
+  }
+  function nearest(px,py){
+    var best=null,bd=hitR;
+    charEls.forEach(function(c){var d=Math.hypot(px-c.ax,py-c.ay);if(d<bd){bd=d;best=c;}});
+    return best;
+  }
+  function drawLine(){
+    ctx.clearRect(0,0,W,H);if(!sel.length)return;
+    ctx.beginPath();ctx.moveTo(sel[0].ax,sel[0].ay);
+    sel.forEach(function(c,i){if(i)ctx.lineTo(c.ax,c.ay);});
+    ctx.strokeStyle="rgba(255,255,255,.7)";ctx.lineWidth=4;ctx.lineCap="round";ctx.lineJoin="round";ctx.stroke();
+    ctx.beginPath();ctx.arc(sel[0].ax,sel[0].ay,6,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,.9)";ctx.fill();
+  }
+  function syncCur(){
+    currentWord=sel.map(function(c){return c.letter;}).join("");
+    var cur=$("cur");cur.innerHTML="";
+    sel.forEach(function(c){var d=document.createElement("div");d.className="cl";d.textContent=c.letter;cur.appendChild(d);});
+  }
+  function onStart(e){
+    e.preventDefault();dragging=true;sel=[];
+    charEls.forEach(function(c){c.el.classList.remove("sel");});
+    var p=getPos(e),ch=nearest(p.x,p.y);
+    if(ch){sel.push(ch);ch.el.classList.add("sel");}
+    syncCur();drawLine();
+  }
+  function onMove(e){
+    if(!dragging)return;e.preventDefault();
+    var p=getPos(e),ch=nearest(p.x,p.y);
+    if(ch&&sel.indexOf(ch)===-1){sel.push(ch);ch.el.classList.add("sel");vibrate(16);syncCur();drawLine();}
+  }
+  function onEnd(e){
+    if(!dragging)return;e.preventDefault();dragging=false;
+    var word=currentWord;
+    setTimeout(function(){
+      sel=[];charEls.forEach(function(c){c.el.classList.remove("sel");});
+      $("cur").innerHTML="";currentWord="";
+      ctx.clearRect(0,0,W,H);
+    },200);
+    checkWord(word);
+  }
+  function dMove(e){if(dragging)onMove(e);}
+  function dEnd(e){if(dragging)onEnd(e);}
+  area.addEventListener("touchstart",onStart,{passive:false});
+  area.addEventListener("touchmove",onMove,{passive:false});
+  area.addEventListener("touchend",onEnd,{passive:false});
+  area.addEventListener("mousedown",onStart);
+  document.addEventListener("mousemove",dMove);
+  document.addEventListener("mouseup",dEnd);
+  _wl={s:onStart,m:onMove,e:onEnd,dm:dMove,de:dEnd};
+}
+
+// ═══════════════════════════════════════════
+// ADMOB
+// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+// ADMOB — Gerçek ID'lerinizi buraya girin
+// Capacitor entegrasyonu için:
+// npm install @capacitor-community/admob
+// ═══════════════════════════════════════════
+var ADMOB={
+  enabled: false,
+  personal: false,
+  intCount: 0,
+  initialized: false,
+  // ▼▼▼ GERÇEK ID'LERİNİZİ BURAYA GİRİN ▼▼▼
+  APP_ID:       "ca-app-pub-6820299390242673~4520294238",  // Uygulama ID
+  BANNER_ID:    "",   // ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX
+  INTER_ID:     "ca-app-pub-6820299390242673/6989057783",   // Seviye atlama
+  REWARD_ID:    "ca-app-pub-6820299390242673/1360961620",   // İpucu ödüllü reklam
+  // ▲▲▲
+  // Test ID'leri (geliştirme modunda otomatik kullanılır)
+  T_BANNER:  "ca-app-pub-3940256099942544/6300978111",
+  T_INTER:   "ca-app-pub-3940256099942544/1033173712",
+  T_REWARD:  "ca-app-pub-3940256099942544/5224354917",
+  // Her 3 levelda bir interstitial göster
+  INTER_EVERY: 4
+};
+
+function getAdId(type){
+  if(type==="banner")  return ADMOB.BANNER_ID  || ADMOB.T_BANNER;
+  if(type==="inter")   return ADMOB.INTER_ID    || ADMOB.T_INTER;
+  if(type==="reward")  return ADMOB.REWARD_ID   || ADMOB.T_REWARD;
+}
+
+function configureAdMob(personal){
+  ADMOB.enabled  = true;
+  ADMOB.personal = personal;
+  // CAPACITOR KODU — canlıda aktif et:
+  // import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob';
+  // AdMob.initialize({
+  //   appId: ADMOB.APP_ID,  // ca-app-pub-6820299390242673~4520294238
+  //   testingDevices: [],
+  //   initializeForTesting: false
+  // });
+  // AdMob.showBanner({
+  //   adId: getAdId("banner"),
+  //   adSize: BannerAdSize.ADAPTIVE_BANNER,
+  //   position: BannerAdPosition.BOTTOM_CENTER,
+  //   npa: !personal
+  // });
+}
+function showInterstitialIfNeeded(){
+  ADMOB.intCount++;
+  if(ADMOB.intCount % ADMOB.INTER_EVERY !== 0) return;
+  // CAPACITOR (canlı):
+  // import { AdMob } from '@capacitor-community/admob';
+  // AdMob.prepareInterstitial({ adId:"ca-app-pub-6820299390242673/6989057783", npa:!ADMOB.personal })
+  //   .then(()=>AdMob.showInterstitial())
+  //   .catch(err=>console.warn("Interstitial hata:",err));
+  // Simülasyon (tarayıcı test):
+  showAdSimulation("inter", null);
+}
+
+function showAdSimulation(type, onDone) {
+  var ov = document.createElement("div");
+  ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;";
+  var box = document.createElement("div");
+  box.style.cssText = "background:#1a2840;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:32px 28px;text-align:center;max-width:300px;width:88%;";
+  var countdown = type === "inter" ? 5 : 0;
+  box.innerHTML = "<div style='font-size:2rem;margin-bottom:8px'>📺</div><div style='color:#fff;font-size:1rem;font-weight:700;margin-bottom:6px'>" + (type==="inter"?"Reklam":"Ödüllü Reklam") + "</div><div style='color:rgba(255,255,255,.5);font-size:.8rem;margin-bottom:20px'>AdMob: ca-app-pub-6820299390242673/" + (type==="inter"?"6989057783":"1360961620") + "</div><button id='ad-close-btn' style='background:linear-gradient(135deg,#3b82f6,#1d4ed8);border:none;border-radius:24px;padding:11px 28px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer' disabled>Kapat (" + countdown + ")</button>";
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  var btn = box.querySelector("#ad-close-btn");
+  if (countdown > 0) {
+    var iv = setInterval(function() {
+      countdown--;
+      btn.textContent = countdown > 0 ? "Kapat (" + countdown + ")" : "Kapat";
+      if (countdown <= 0) { clearInterval(iv); btn.disabled = false; }
+    }, 1000);
+  } else {
+    btn.disabled = false;
+  }
+  btn.addEventListener("click", function() {
+    document.body.removeChild(ov);
+    if (onDone) onDone();
+  });
+}
+function showRewardedAd(onReward){
+  // CAPACITOR (canlı):
+  // import { AdMob } from '@capacitor-community/admob';
+  // AdMob.prepareRewardVideoAd({ adId:"ca-app-pub-6820299390242673/1360961620", npa:!ADMOB.personal })
+  //   .then(()=>AdMob.showRewardVideoAd())
+  //   .then(reward=>{ onReward(reward.amount||10); })
+  //   .catch(err=>{ console.warn("Rewarded hata:",err); onReward(10); });
+  // return;
+  // Simülasyon — 5 sn reklam, sonra ödül
+  showAdSimulation("reward", function(){ onReward(10); });
+}
+window.addEventListener("resize",function(){
+  if($("game").classList.contains("active")){
+    buildWheel();setTimeout(scaleGrid,80);
+  }
+});
+</script>
+</body>
+</html>
