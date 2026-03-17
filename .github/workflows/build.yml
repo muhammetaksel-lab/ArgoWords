@@ -1,106 +1,70 @@
 bash
 
-cat << 'EOF'
+cat << 'YAML'
 name: Build Android APK
-
 on:
   push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Install dependencies
         run: npm install
-
       - name: Install Capacitor
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
       - name: Copy web assets
-        run: |
-          mkdir -p dist
-          cp index.html dist/index.html
-
+        run: mkdir -p dist && cp index.html dist/index.html
       - name: Capacitor sync
-        run: |
-          npx cap add android || true
-          npx cap sync
-
+        run: npx cap add android || true && npx cap sync
       - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: argowords-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
-EOF
+YAML
 Output
 
 name: Build Android APK
-
 on:
   push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Install dependencies
         run: npm install
-
       - name: Install Capacitor
-        run: |
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
       - name: Copy web assets
-        run: |
-          mkdir -p dist
-          cp index.html dist/index.html
-
+        run: mkdir -p dist && cp index.html dist/index.html
       - name: Capacitor sync
-        run: |
-          npx cap add android || true
-          npx cap sync
-
+        run: npx cap add android || true && npx cap sync
       - name: Build APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
